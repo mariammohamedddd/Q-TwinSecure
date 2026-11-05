@@ -24,7 +24,7 @@ This file distinguishes **reported setup**, **drafted code**, **verified impleme
 | Twin gateway | In progress | Standalone decryption implemented and tested locally; integration not started. |
 | AES-GCM protection | In progress | Standalone demo and tests passed locally; end-to-end integration remains outstanding. |
 | TLS 1.3 external PSK | Not started | Optional for this small PoC; do not claim it is implemented. |
-| Digital Twin freshness logic | Not started | |
+| Digital Twin freshness logic | In progress | Monitor and local preview tested: 10 Python tests and 1 JavaScript DOM-harness test passed on 2026-11-05. Owner panel added. Browser visual review and shared integration pending. |
 | Main end-to-end flow | Not started | |
 | Automated tests | In progress | Six standalone gateway tests passed locally; other components not verified. |
 | Normal/interruption/recovery experiment | Not started | |
