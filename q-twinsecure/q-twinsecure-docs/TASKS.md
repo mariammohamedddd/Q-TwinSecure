@@ -1,0 +1,89 @@
+# Tasks and Work Plan
+
+## Guiding rule
+
+Build the smallest complete demonstration first. Do not add advanced features until the normal → interruption → recovery scenario works end to end.
+
+## Phase 0 — Repository and environment
+
+- [ ] Confirm one shared repository root and naming convention.
+- [ ] Add the Markdown project documents.
+- [ ] Confirm Python version and activate the virtual environment.
+- [ ] Add `requirements.txt`.
+- [ ] Confirm package imports work.
+- [ ] Add a `.gitignore` for `venv/`, `__pycache__/`, `.pytest_cache/`, `.env`, and local output files.
+
+## Phase 1 — Emulated key supply
+
+- [ ] Implement key record structure (`key_id`, key material).
+- [ ] Implement bounded matching device-side and Twin-side pools.
+- [ ] Generate 32-byte key material using `secrets.token_bytes(32)`.
+- [ ] Implement key consumption that returns matching endpoint records.
+- [ ] Implement supply interruption and recovery.
+- [ ] Expose safe status metrics; never expose raw key material.
+- [ ] Test capacity limits, empty pool, interruption, recovery, and endpoint synchronization.
+
+**Acceptance criteria:** The pool never exceeds configured capacity; both endpoints receive matching key IDs/material; no key can be consumed when the pool is empty; interruption prevents new generation; recovery allows generation again.
+
+## Phase 2 — Sensor simulator
+
+- [ ] Create a CO₂ reading model with value, sensor ID, and timestamp.
+- [ ] Generate repeatable readings.
+- [ ] Test timestamp and reading serialization.
+
+**Acceptance criteria:** The simulator produces valid timestamped readings without requiring hardware.
+
+## Phase 3 — Secure message / gateway
+
+- [ ] Agree on a small message schema.
+- [ ] Implement AES-256-GCM encryption and decryption for PoC messages.
+- [ ] Generate a fresh unique 12-byte nonce for each encryption under a key.
+- [ ] Authenticate required metadata.
+- [ ] Reject tampered ciphertext or metadata.
+- [ ] Separate connection-epoch key allocation from per-reading encryption.
+- [ ] Document that direct AES-GCM is a PoC simplification if TLS 1.3 external PSK is not implemented.
+
+**Acceptance criteria:** A valid protected reading decrypts correctly; a modified message fails authentication; nonce reuse under the same key is prevented by design.
+
+## Phase 4 — Twin receiver and freshness
+
+- [ ] Accept only successfully authenticated readings.
+- [ ] Store the latest valid reading and receive timestamp.
+- [ ] Calculate observation age.
+- [ ] Implement `CURRENT`, `DELAYED`, and `MISSING`.
+- [ ] Make thresholds configurable.
+- [ ] Test transitions between freshness states.
+
+**Acceptance criteria:** Freshness changes correctly as observations arrive or stop; invalid messages do not update the Twin.
+
+## Phase 5 — End-to-end experiment
+
+- [ ] Run normal operation and verify readings reach the Twin.
+- [ ] Interrupt key supply while an existing connection epoch is active.
+- [ ] Verify the existing epoch is not automatically terminated by key-supply interruption.
+- [ ] Request a new connection epoch while no key is available; verify failure.
+- [ ] Verify readings stop after the active epoch is closed/ended and no new epoch can be established.
+- [ ] Verify Twin status transitions from `CURRENT` to `DELAYED` to `MISSING`.
+- [ ] Restore key supply and replenish the pool.
+- [ ] Establish a new epoch and verify readings resume and Twin returns to `CURRENT`.
+- [ ] Save logs/results and record configuration.
+
+**Acceptance criteria:** The demonstration clearly shows the causal chain from constrained key availability to new-connection failure, observation interruption, and Twin freshness degradation, followed by recovery.
+
+## Phase 6 — Polish and evidence
+
+- [ ] Add a concise run guide.
+- [ ] Add architecture diagram and experiment table to the report/slides.
+- [ ] Capture reproducible terminal/dashboard evidence.
+- [ ] Record limitations and avoid unsupported security claims.
+- [ ] Update `IMPLEMENTATION_STATUS.md`.
+
+## Not part of the current 10% PoC
+
+- [ ] Physical QKD or BB84 over quantum hardware.
+- [ ] Physical CO₂ sensor integration.
+- [ ] Full industrial Modbus/TCP deployment.
+- [ ] Production TLS/mTLS infrastructure unless specifically selected and time permits.
+- [ ] ML anomaly detection.
+- [ ] LLM incident explanations.
+- [ ] Cloud deployment and production hardening.
