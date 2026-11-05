@@ -49,6 +49,22 @@ age values, colour-coded status, plain-language state explanations, and a
 three-step demonstration guide. No external fonts or frontend dependencies are
 required. Refresh the page after restarting the preview server to see changes.
 
+The local preview now opens in an immersive full-window factory view. Details
+are overlaid on the scene. Zoom buttons or the mouse wheel adjust magnification
+between 50% and 300%; drag the model to rotate, or use the rotation buttons.
+Reset view restores angle and zoom. Information panels scroll independently.
+Nancy can opt into this layout with `mountTwinPanel(root, {fullScreen:true})`;
+the default embedded panel remains available for shared-dashboard integration.
+
+The panel includes an interactive CSS 3D factory model with a red glowing sensor
+marker. Rotate left, rotate right and reset controls change the model's view.
+Machines, crates and walls have separate 3D faces; no external model library is
+required. This marker is decorative and never represents a safety alarm or live
+physical location. Details sit alongside the floor plan on wide screens and
+stack on smaller screens. Measurement and receive timestamps use a readable
+date/time with the browser's local timezone; hover to inspect the original
+ISO timestamp. Backend timestamps and freshness calculations are unchanged.
+
 Run from the `q-twinsecure` folder:
 
 ```powershell
