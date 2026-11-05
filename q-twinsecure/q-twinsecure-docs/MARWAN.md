@@ -33,5 +33,10 @@ Capacity bound; matching endpoint records; empty pool; interruption; recovery; c
 ## Acceptance
 Demo and tests run independently and match `INTERFACE_CONTRACT.md`. Record actual results in `IMPLEMENTATION_STATUS.md`.
 
+## Dashboard and integration tasks
+- Expose supply state and safe pool counts through the shared contract in [plan.md](plan.md), never key material.
+- Build the key-supply panel showing supply state and counts, including empty and interrupted states.
+- Test the panel against the real backend and coordinate supply controls and API changes with Nancy.
+
 ## Not assigned
-Gateway encryption, sensor simulator, Twin freshness, end-to-end integration, physical QKD/BB84.
+Gateway encryption, sensor simulator, Twin freshness, physical QKD/BB84.

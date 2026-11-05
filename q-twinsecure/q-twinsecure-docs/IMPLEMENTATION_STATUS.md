@@ -20,13 +20,13 @@ This file distinguishes **reported setup**, **drafted code**, **verified impleme
 |---|---|---|
 | CO₂ sensor simulator | Not started | |
 | Emulated QKD key pool | Drafted in chat; repository/run status unverified | A Python implementation was provided earlier, but do not assume it has been saved or tested. |
-| Device gateway | Not started | |
-| Twin gateway | Not started | |
-| AES-GCM protection | Not started | `cryptography` dependency installed. |
+| Device gateway | In progress | Standalone encryption implemented and tested locally; integration not started. |
+| Twin gateway | In progress | Standalone decryption implemented and tested locally; integration not started. |
+| AES-GCM protection | In progress | Standalone demo and tests passed locally; end-to-end integration remains outstanding. |
 | TLS 1.3 external PSK | Not started | Optional for this small PoC; do not claim it is implemented. |
 | Digital Twin freshness logic | Not started | |
 | Main end-to-end flow | Not started | |
-| Automated tests | Not started | |
+| Automated tests | In progress | Six standalone gateway tests passed locally; other components not verified. |
 | Normal/interruption/recovery experiment | Not started | |
 | ML anomaly detection | Out of current PoC scope | Broader research direction only. |
 | LLM explanations | Out of current PoC scope | Broader research direction only. |
@@ -49,7 +49,12 @@ Use these status labels:
 - `Blocked`
 - `Out of PoC scope`
 
+## Planned dashboard status
+
+The committee dashboard, shared API, integrated scenario runner and owner panels are planned in [plan.md](plan.md); they have not been implemented or verified by this documentation update. Existing component status and the local gateway evidence remain separate.
+
 ## 4. Update log
 
+- 2026-11-05: Kareem's standalone AES-GCM gateway is implemented on branch `kareem`. With Python 3.12 and cryptography 48.0.1, `python -B -m unittest discover -s tests -p test_gateway_crypto.py -v` passed 6 tests, and `python -B -m gateway.demo` recovered a sample reading and rejected modified ciphertext. These checks do not establish end-to-end integration.
 - 2026-11-05: Python virtual environment and `cryptography` installation reported successful.
 - 2026-11-05: Initial PoC folder structure and key-pool design discussed. Actual files and execution still need confirmation.

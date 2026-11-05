@@ -34,5 +34,10 @@ No reading -> MISSING; fresh -> CURRENT; older -> DELAYED; expired -> MISSING; i
 ## Acceptance
 Demo/tests run independently and follow `INTERFACE_CONTRACT.md`. Record actual results in `IMPLEMENTATION_STATUS.md`.
 
+## Dashboard and integration tasks
+- Expose latest accepted observation, age, thresholds and freshness through the shared contract in [plan.md](plan.md).
+- Build the Twin panel with clear CURRENT, DELAYED and MISSING states and an empty state.
+- Test that real backend updates appear and invalid messages do not update the panel. Coordinate shared API changes with Nancy.
+
 ## Not assigned
-Sensor generation, encryption/decryption, key/connection management, integration, large web dashboard.
+Sensor generation, encryption/decryption and key/connection management.

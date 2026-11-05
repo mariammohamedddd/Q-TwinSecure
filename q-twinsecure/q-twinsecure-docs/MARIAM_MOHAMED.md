@@ -38,5 +38,10 @@ Required fields; stable non-empty sensor ID; numeric value in configured range; 
 ## Acceptance
 Demo/tests run independently and output matches `INTERFACE_CONTRACT.md`. Record actual results in `IMPLEMENTATION_STATUS.md`.
 
+## Dashboard and integration tasks
+- Expose safe sensor status through the shared integration contract in [plan.md](plan.md).
+- Build the sensor panel showing current value, sensor ID and timestamp from the real backend; handle unavailable data.
+- Test the panel with the integrated runner and verify displayed readings match the backend. Coordinate shared API changes with Nancy.
+
 ## Not assigned
-Encryption/transmission, key management, Twin freshness, integration, physical sensor/Modbus hardware.
+Encryption/transmission, key management, Twin freshness, other owners' modules, physical sensor/Modbus hardware.

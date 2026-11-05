@@ -37,5 +37,9 @@ Equivalent public behavior:
 
 States: `CURRENT`, `DELAYED`, `MISSING`. Thresholds must be configurable.
 
+## Planned dashboard integration
+
+The versioned status and scenario-control contract for the shared local dashboard is specified in [plan.md](plan.md). Each component supplies real state to the integration runner; no raw key material is sent to the browser. Existing component interfaces above remain the starting point.
+
 ## Independence
 Sensor/Twin work uses local sample dictionaries; gateway tests use a local test key and fake key provider; key-pool work uses its own demo. No contributor should need another module to run their own demo.
