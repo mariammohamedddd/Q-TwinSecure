@@ -51,10 +51,11 @@ Use these status labels:
 
 ## Planned dashboard status
 
-The committee dashboard, shared API, integrated scenario runner and owner panels are planned in [plan.md](plan.md); they have not been implemented or verified by this documentation update. Existing component status and the local gateway evidence remain separate.
+The shared dashboard, API and integrated scenario runner are planned in [plan.md](plan.md) and have not been verified. Kareem's gateway status adapter and panel are implemented independently; they are not yet connected to the shared dashboard or Twin. Existing component status and local gateway evidence remain separate.
 
 ## 4. Update log
 
+- 2026-11-05: Added an independent gateway status adapter and panel on `kareem`. `python -B -m unittest discover -s tests -p 'test_gateway*.py' -v` passed 10 tests; `node --test tests/test_gateway_panel.mjs` passed 1 test using an actual local backend status snapshot. The shared API, browser integration, and Twin rejection behavior have not been tested end to end.
 - 2026-11-05: Kareem's standalone AES-GCM gateway is implemented on branch `kareem`. With Python 3.12 and cryptography 48.0.1, `python -B -m unittest discover -s tests -p test_gateway_crypto.py -v` passed 6 tests, and `python -B -m gateway.demo` recovered a sample reading and rejected modified ciphertext. These checks do not establish end-to-end integration.
 - 2026-11-05: Python virtual environment and `cryptography` installation reported successful.
 - 2026-11-05: Initial PoC folder structure and key-pool design discussed. Actual files and execution still need confirmation.
