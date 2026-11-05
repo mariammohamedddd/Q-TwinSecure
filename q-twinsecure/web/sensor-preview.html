@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b151b">
+  <title>Sensor Observatory · Q-TwinSecure</title>
+  <link rel="stylesheet" href="/sensor-panel.css">
+</head>
+<body class="sensor-preview">
+  <header class="preview-header"><a href="/" class="brand"><span class="brand-mark">Q</span> Q-TwinSecure<span class="brand-divider">/</span><span class="brand-section">Sensor observatory</span></a><span class="preview-label">LOCAL PROOF OF CONCEPT</span></header>
+  <main><co2-sensor-panel></co2-sensor-panel></main>
+  <footer class="preview-footer"><span>Q-TwinSecure <span class="footer-dot">·</span> Industrial monitoring research</span><span>Software simulation <span class="footer-dot">/</span> Mariam Mohamed</span></footer>
+  <script type="module">
+    import { startSensorPolling } from '/sensor-panel.js';
+    startSensorPolling(document.querySelector('co2-sensor-panel'));
+  </script>
+</body>
+</html>
