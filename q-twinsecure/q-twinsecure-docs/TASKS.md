@@ -31,11 +31,13 @@ Build the smallest complete demonstration first. Do not add advanced features un
 
 ## Phase 2 — Sensor simulator
 
-- [ ] Create a CO₂ reading model with value, sensor ID, and timestamp.
-- [ ] Generate repeatable readings.
-- [ ] Test timestamp and reading serialization.
+- [x] Create a CO₂ reading model with value, sensor ID, and timestamp.
+- [x] Generate repeatable readings.
+- [x] Test timestamp and reading serialization.
 
 **Acceptance criteria:** The simulator produces valid timestamped readings without requiring hardware.
+
+Local verification on 2026-11-05: 10 sensor tests passed and the independent demo printed five shared-contract readings using Python 3.14. See `sensor/README.md`. Reusable sensor dashboard panel and standalone Python-backed preview are now saved. Follow-up validation passed 13 Python tests and four JavaScript check groups. Browser visual verification and connection to Nancy's shared runner remain pending; no shared integration is claimed.
 
 ## Phase 3 — Secure message / gateway
 
