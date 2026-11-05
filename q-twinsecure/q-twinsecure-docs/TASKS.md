@@ -1,5 +1,9 @@
 # Tasks and Work Plan
 
+## Revised committee-demo plan
+
+The phased full-stack plan and ownership are in [plan.md](plan.md). Every owner implements a backend contribution and a dashboard contribution; Nancy coordinates the shared runner and shell. The phases below remain component checklists, not an indication that the dashboard or integration is complete.
+
 ## Guiding rule
 
 Build the smallest complete demonstration first. Do not add advanced features until the normal → interruption → recovery scenario works end to end.
@@ -72,6 +76,7 @@ Build the smallest complete demonstration first. Do not add advanced features un
 
 ## Phase 6 — Polish and evidence
 
+- [ ] Implement and test the shared dashboard and each owner's real-data panel as specified in [plan.md](plan.md).
 - [ ] Add a concise run guide.
 - [ ] Add architecture diagram and experiment table to the report/slides.
 - [ ] Capture reproducible terminal/dashboard evidence.

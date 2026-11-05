@@ -1,5 +1,9 @@
 # PoC Architecture
 
+## Planned committee dashboard
+
+One local Python runner will connect the real components and serve a shared dashboard; the proposed status and control contract and ownership are in [plan.md](plan.md). Panels display safe backend state and never receive raw keys. The dashboard and integration are planned, not yet verified as implemented.
+
 ## 1. Logical flow
 
 ```text
@@ -75,7 +79,7 @@
 ### Application entry point (`main.py`)
 - Wires components together.
 - Runs the normal, interruption, and recovery scenario.
-- Prints or displays the key status, connection state, observation delivery, and Twin freshness.
+- Exposes safe state to a shared dashboard showing key status, connection state, observation delivery, and Twin freshness.
 
 ## 3. Suggested message structure
 

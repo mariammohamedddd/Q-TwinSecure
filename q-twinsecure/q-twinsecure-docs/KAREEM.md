@@ -38,5 +38,10 @@ Document intended semantics: one key per new protected connection epoch; multipl
 ## Acceptance
 Demo/tests run independently and follow `INTERFACE_CONTRACT.md`. Record actual results in `IMPLEMENTATION_STATUS.md`.
 
+## Dashboard and integration tasks
+- Expose non-secret gateway and verification status through the shared contract in [plan.md](plan.md); never expose key bytes. Coordinate epoch state with Nancy.
+- Build the gateway panel showing connection state and whether the latest message was verified or rejected; include a clear unavailable state.
+- Test the panel against real backend status and verify a rejected message does not update the Twin. Coordinate shared API changes with Nancy.
+
 ## Not assigned
-Key-pool internals, sensor generation, Twin freshness, full experiment, production TLS/mTLS.
+Key-pool internals, sensor generation, Twin freshness, production TLS/mTLS.

@@ -1,7 +1,7 @@
-# Nancy — Experiment Validation, Reproducibility, Evidence + Small Integration Subtask
+# Nancy — Integration, Dashboard, Experiment Validation and Evidence
 
 ## Goal
-Own the experiment procedure, validation checklist, reproducibility, and evidence for the 10% PoC. This is not a full implementation role. Start independently by writing scenario steps and expected results using mock events.
+Own the experiment procedure, validation checklist, reproducibility, and evidence for the 10% PoC. Own the integration backend and shared dashboard frontend as well as evidence. Start independently with the scenario contract and dashboard shell.
 
 ## Main tasks
 1. Write the normal, interruption, and recovery experiment procedure.
@@ -13,14 +13,14 @@ Own the experiment procedure, validation checklist, reproducibility, and evidenc
 7. Update `IMPLEMENTATION_STATUS.md` only from actual evidence.
 8. Record approved scope/architecture changes in `DECISIONS.md`.
 
-## Small integration subtask
+## Integration backend and frontend
 After the four component demos run independently:
 - Wire the agreed public interfaces through a minimal `main.py`.
 - Connect sample sensor reading -> gateway encrypt/decrypt -> Twin update, and use key-pool output for new connection-epoch establishment.
 - Run the three agreed scenarios.
 - Fix only small wiring/interface issues or report component defects to the owner.
 
-This is a **subtask**, not your whole assignment. Do not rewrite another person's module, take over all debugging, or build a large orchestration framework. Each owner remains responsible for their component.
+Build the shared local API and scenario runner, dashboard shell, controls and event/result display as specified in [plan.md](plan.md). Coordinate integration with the component owners; each owner fixes their own component and panel.
 
 ## Files
 ```text
@@ -28,7 +28,7 @@ experiments/
 ├── scenario_checklist.md
 └── results.md
 evidence/README.md
-main.py  # minimal integration subtask only
+main.py  # shared integration runner
 ```
 
 ## Scenario expectations
@@ -54,4 +54,4 @@ Resume supply, replenish pool, establish a new epoch, resume readings, Twin retu
 Procedure exists; each component is independently tested by its owner; minimal integration demonstrates all scenarios; evidence/results are saved; limitations are clear.
 
 ## Not assigned
-Implementing key-pool, sensor, AES-GCM, or Twin internals; owning all component debugging; building a large dashboard.
+Implementing other owners' component internals or owning all component debugging.

@@ -21,6 +21,8 @@ The main question is:
 
 **How does constrained emulated key supply affect secure connection establishment/renewal and the freshness of Digital Twin observations?**
 
+The team is planning one integrated local dashboard for the committee. Each member owns a backend contribution and a visual section; see [plan.md](plan.md). This dashboard is not yet implemented.
+
 ## 2. Current PoC scope
 
 ### In scope
@@ -29,7 +31,7 @@ The main question is:
 - Bounded, in-memory key pools for the device-side and Twin-side endpoints.
 - A minimal secure gateway demonstration.
 - Authenticated encryption (AES-GCM) for protected messages.
-- A minimal Digital Twin status/display.
+- A shared local dashboard showing sensor, key, gateway, Twin and experiment states.
 - A repeatable normal → interruption → recovery experiment.
 - Basic tests and clear logs.
 

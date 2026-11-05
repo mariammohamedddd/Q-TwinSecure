@@ -11,7 +11,19 @@ This is a small, simple, effective proof of concept—not the full research impl
 | Mariam Mohamed | CO₂ sensor simulator | Runnable timestamped-reading demo |
 | Mariam Wael | Digital Twin freshness monitor | Runnable monitor demo using sample readings |
 | Kareem | AES-256-GCM gateway demonstration | Runnable encrypt/decrypt and tamper-rejection demo |
-| Nancy | Experiment validation and evidence | Scenario checklist, results, evidence; small integration subtask |
+| Nancy | Integration, scenario controls and evidence | Integrated runner, dashboard controls and reproducible results |
+
+## Committee demo: full-stack ownership
+
+The team will build one local dashboard backed by the real Python components. Each owner implements their domain logic, safe status interface and corresponding visual panel. Nancy owns shared orchestration and the dashboard shell; coordinate shared changes before editing them. See [plan.md](plan.md) for phases, paths, contracts and review gates. The dashboard is planned, not yet implemented.
+
+| Person | Backend responsibility | Frontend responsibility |
+|---|---|---|
+| Marwan | Key-pool status and supply operations | Key supply, counts and interruption indicator |
+| Mariam Mohamed | Sensor readings and safe status | Sensor value, ID and timestamp |
+| Kareem | Encryption/decryption and safe gateway status | Protection, verification and connection status |
+| Mariam Wael | Twin observation and freshness status | Latest accepted reading, age and freshness |
+| Nancy | Integrated scenario runner, local API and evidence | Dashboard shell, scenario controls and event/result display |
 
 ## Independence rules
 - Start immediately; do not wait for another component.
@@ -39,5 +51,5 @@ This is a small, simple, effective proof of concept—not the full research impl
 ## Definition of done
 Code is saved in the agreed path, runs independently, has normal and relevant failure/boundary tests, has short run instructions, and has actual test results recorded. Drafted code is not automatically implemented code.
 
-## Integration subtask
-Nancy's main task is experiment validation and evidence. As a **small subtask only**, after the components work independently, she wires their agreed public interfaces through a minimal `main.py` and runs the three scenarios. She does not rewrite or own the other components.
+## Integration ownership
+Nancy's main task is experiment validation and evidence. Nancy owns the shared integration runner, local API, dashboard shell and scenario controls. Each owner connects and tests their own panel and fixes their own component. See [plan.md](plan.md).
