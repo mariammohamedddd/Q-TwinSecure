@@ -5,6 +5,8 @@ From the `q-twinsecure` directory, with `cryptography` installed:
 ```powershell
 python -m gateway.demo
 python -m unittest discover -s tests -p test_gateway_crypto.py -v
+python -m unittest discover -s tests -p test_gateway_status.py -v
+node --test tests/test_gateway_panel.mjs
 ```
 
 `encrypt_reading(reading, key)` and `decrypt_reading(envelope, key)` use a 32-byte key. The envelope contains version 1, a standard Base64-encoded 12-byte random nonce, and standard Base64-encoded ciphertext with the 16-byte authentication tag appended. The version is authenticated as associated data; the reading is inside the authenticated ciphertext. Invalid authentication raises `cryptography.exceptions.InvalidTag`; malformed input raises `ValueError`.
@@ -12,3 +14,9 @@ python -m unittest discover -s tests -p test_gateway_crypto.py -v
 The nonce is randomly generated for each encryption. A key must never be used with the same nonce twice; this demonstration does not persist or coordinate nonces across processes or enforce a per-key usage limit.
 
 The intended integration allocates one key per new protected connection epoch and can use it for multiple readings. Interrupting supply does not itself end an active epoch; establishing a new epoch requires an available key. This module does not manage epochs or the key pool. Direct AES-GCM is a proof-of-concept simplification, not TLS 1.3 or a complete network protocol.
+
+## Status adapter and panel
+
+The future runner owns key allocation and calls `GatewayStatus.start_epoch(non_secret_epoch_id)` only after establishing an epoch, and `end_epoch()` when it closes. Call `verify_reading(envelope, key)` and forward its return value to the Twin only if it succeeds. Rejected or malformed messages raise an exception and return no reading. `get_status()` returns only `connection_state`, `connection_epoch`, and `verification` (`VERIFIED`, `REJECTED`, or null). The runner must pass only a non-secret identifier; this adapter does not allocate keys or communicate with the Twin.
+
+The shared dashboard can import `renderGatewayPanel` from `web/gateway-panel.js` and call it with a container and the `gateway` object from its status response, or `null` if unavailable. The panel displays verification, not Twin delivery. Node is only needed for the panel test. The shared server, API and integrated dashboard have not yet been connected.
