@@ -53,6 +53,12 @@ Local verification on 2026-11-05: 10 sensor tests passed and the independent dem
 
 ## Phase 4 — Twin receiver and freshness
 
+Mariam Wael component update (2026-11-05): monitor, configurable thresholds,
+status snapshot, terminal demo and owner panel implemented locally. Ten Python
+tests and one JavaScript DOM-harness test passed. Run instructions and panel
+handoff are in `MARIAM_WAEL.md`. Shared dashboard integration and authenticated
+pipeline checks remain pending; component review is next. Prepared for component review.
+
 - [ ] Accept only successfully authenticated readings.
 - [ ] Store the latest valid reading and receive timestamp.
 - [ ] Calculate observation age.

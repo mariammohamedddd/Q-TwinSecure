@@ -30,3 +30,7 @@ Phase 1 is a shell, not an end-to-end experiment. No physical QKD or TLS impleme
 ## Gateway runner coordination — 2026-11-07
 
 `py -B -m unittest discover -s tests -v`: PASS, 39 tests. JavaScript syntax checks for app.js and gateway-panel.js passed. With `$env:PYTHON = 'py'`, `node --test tests/test_gateway_panel.mjs tests/test_sensor_panel.mjs`: PASS, both files. Runner tests exercise Kareem's actual crypto/status code with a test-only matching key provider, including HTTP lifecycle/status/module loading. Default runner still has no real key provider. Browser review and end-to-end Twin evidence remain pending.
+
+## Latest main merge verification — 2026-11-07
+
+Merged origin/main d846b6d into Nancy, retaining runner coordination and including Kareem's actual sensor/gateway/Twin rejection test. Full Python suite: 50 passed. JavaScript gateway, sensor and Twin test files: 4 test entries passed. Shared app/gateway module syntax checks passed. Actual key-pool integration and browser review remain pending.
