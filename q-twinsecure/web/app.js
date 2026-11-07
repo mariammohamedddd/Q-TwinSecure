@@ -1,3 +1,8 @@
+import { renderKeyPanel } from './key-panel.js';
+import './sensor-panel.js';
+import './twin-panel.js';
+const twinPanel = globalThis.mountTwinPanel(document.querySelector('#twin-panel'));
+const sensorPanel = document.querySelector('co2-sensor-panel');
 import { renderGatewayPanel } from "./gateway-panel.js";
 const connection = document.querySelector('#connection');
 const controls = document.querySelector('#controls');
@@ -18,16 +23,20 @@ function setControls() {
 }
 
 function render(status) {
-  if (status.api_version !== 1 || status.phase !== 2 || !status.actions || !status.clock || !Array.isArray(status.events)) {
+  if (status.api_version !== 1 || status.phase !== 3 || !status.actions || !status.clock || !Array.isArray(status.events)) {
     throw new Error('Unsupported runner contract');
   }
   renderGatewayPanel(document.querySelector("#gateway-panel"), status.gateway);
+  renderKeyPanel(document.querySelector('#key-panel'), status.key_pool);
+  sensorPanel.update(status.sensor);
+  twinPanel.update(status.twin);
+  document.querySelector('#scenario-status').textContent = `Scenario: ${status.scenario} · Generated: ${status.readings_generated} · Delivered: ${status.readings_delivered}`;
   latestStatus = status;
   online = true;
-  connection.textContent = 'Local runner connected · Component integration pending';
+  connection.textContent = 'Local runner connected · Integrated components';
   connection.dataset.state = 'connected';
   document.querySelector('#clock-status').textContent = `Experiment clock: ${status.clock.elapsed_seconds} seconds (manual; paused between actions)`;
-  document.querySelector('#action-help').textContent = 'Component actions are unavailable until their owners supply tested interfaces. Clock limit: 86400 seconds; reset to restart.';
+  document.querySelector('#action-help').textContent = 'Keys and clock are presenter-controlled. Generate keys, start an epoch, then send readings. Clock limit: 86400 seconds.';
   const events = document.querySelector('#events');
   events.replaceChildren();
   document.querySelector('#event-empty').hidden = status.events.length > 0;
@@ -53,6 +62,9 @@ async function request(path, options = {}) {
 
 function disconnected() {
   online = false;
+  renderKeyPanel(document.querySelector('#key-panel'), null, { state: 'disconnected' });
+  sensorPanel.unavailable();
+  twinPanel.disconnected();
   renderGatewayPanel(document.querySelector("#gateway-panel"), null);
   connection.textContent = 'Disconnected · Local runner unavailable. Check the terminal; retrying automatically. Displayed events may be stale.';
   connection.dataset.state = 'disconnected';

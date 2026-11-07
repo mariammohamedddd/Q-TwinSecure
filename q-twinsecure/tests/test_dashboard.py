@@ -38,50 +38,64 @@ class DashboardTests(unittest.TestCase):
 
     def test_page_and_assets(self):
         for path, expected in [("/", "text/html"), ("/app.js", "text/javascript"),
-                               ("/style.css", "text/css"), ("/gateway-panel.js", "text/javascript")]:
+                               ("/style.css", "text/css"), ("/key-panel.js", "text/javascript"),
+                               ("/sensor-panel.js", "text/javascript"), ("/twin-panel.js", "text/javascript"),
+                               ("/sensor-panel.css", "text/css"), ("/gateway-panel.js", "text/javascript")]:
             with self.subTest(path=path):
                 code, kind, body = self.request(path)
                 self.assertEqual(code, 200)
                 self.assertIn(expected, kind)
                 self.assertTrue(body)
 
-    def test_status_does_not_fabricate_component_results(self):
-        code, _, body = self.request("/api/status")
-        self.assertEqual(code, 200)
+    def test_initial_real_status(self):
+        code, _, body = self.request('/api/status')
         status = json.loads(body)
-        self.assertEqual(status['phase'], 2)
-        self.assertFalse(status["integration_ready"])
-        self.assertEqual(status["gateway"]["connection_state"], "DISCONNECTED")
-        for field in ("key_pool", "sensor", "twin",
-                      "readings_generated", "readings_delivered"):
-            self.assertIsNone(status[field])
-        self.assertEqual(status["events"], [])
-        self.assertTrue(status['actions']['reset']['enabled'])
-        self.assertFalse(status['actions']['start_epoch']['enabled'])
-
-    def test_advance_and_reset(self):
-        for expected in (5, 10):
-            code, status = self.action({'action': 'advance_time', 'seconds': 5})
-            self.assertEqual(code, 200)
-            self.assertEqual(status['clock']['elapsed_seconds'], expected)
-            self.assertEqual(status['events'][-1]['elapsed_seconds'], expected)
-        code, status = self.action({'action': 'reset'})
         self.assertEqual(code, 200)
-        self.assertEqual(status['clock']['elapsed_seconds'], 0)
-        self.assertEqual(len(status['events']), 1)
-        self.assertEqual(status['events'][0]['action'], 'reset')
-        self.assertIsNone(status['readings_delivered'])
+        self.assertEqual(status['phase'], 3)
+        self.assertTrue(status['integration_ready'])
+        self.assertEqual(status['key_pool']['keys_available'], 0)
+        self.assertEqual(status['gateway']['connection_state'], 'DISCONNECTED')
+        self.assertIsNone(status['sensor'])
+        self.assertEqual(status['twin']['freshness'], 'MISSING')
+        self.assertEqual(status['readings_delivered'], 0)
 
-    def test_component_actions_explicitly_unavailable(self):
-        for action in ('generate_keys', 'interrupt_supply', 'resume_supply',
-                       'start_epoch', 'end_epoch', 'send_reading'):
-            payload = {'action': action}
-            if action == 'generate_keys':
-                payload['count'] = 1
-            code, data = self.action(payload)
-            self.assertEqual(code, 409)
-            self.assertEqual(data['status']['events'][-1]['outcome'], 'unavailable')
-            self.assertIsNone(data['status']['readings_delivered'])
+    def test_http_normal_interruption_expiry_recovery_and_reset(self):
+        def act(action, **fields):
+            code, data = self.action({'action': action, **fields})
+            self.assertEqual(code, 200, data)
+            return data
+        act('generate_keys', count=1)
+        act('start_epoch')
+        first = act('send_reading')
+        self.assertEqual(first['sensor']['value_ppm'], first['twin']['value_ppm'])
+        self.assertEqual(first['twin']['freshness'], 'CURRENT')
+        act('interrupt_supply')
+        active = act('send_reading')
+        self.assertEqual(active['readings_delivered'], 2)
+        self.assertEqual(active['key_pool']['keys_consumed'], 1)
+        self.assertEqual(self.action({'action': 'generate_keys', 'count': 1})[0], 409)
+        act('end_epoch')
+        code, blocked = self.action({'action': 'start_epoch'})
+        self.assertEqual(code, 409)
+        self.assertEqual(blocked['status']['gateway']['connection_state'], 'DISCONNECTED')
+        self.assertEqual(self.action({'action': 'send_reading'})[0], 409)
+        self.assertEqual(act('advance_time', seconds=6)['twin']['freshness'], 'DELAYED')
+        self.assertEqual(act('advance_time', seconds=10)['twin']['freshness'], 'MISSING')
+        act('resume_supply')
+        act('generate_keys', count=1)
+        act('start_epoch')
+        recovered = act('send_reading')
+        self.assertEqual(recovered['twin']['freshness'], 'CURRENT')
+        self.assertEqual(recovered['readings_delivered'], 3)
+        self.assertEqual(recovered['key_pool']['keys_consumed'], 2)
+        reset = act('reset')
+        self.assertEqual(reset['readings_delivered'], 0)
+        self.assertEqual(reset['readings_generated'], 0)
+        self.assertEqual(reset['key_pool']['keys_generated'], 0)
+        self.assertEqual(reset['clock']['elapsed_seconds'], 0)
+        self.assertIsNone(reset['sensor'])
+        self.assertEqual(reset['twin']['freshness'], 'MISSING')
+        self.assertEqual(len(reset['events']), 1)
 
     def test_invalid_actions_cannot_mutate_state_or_echo_input(self):
         payloads = [None, [], {}, {'action': 'secret-test-input'},
