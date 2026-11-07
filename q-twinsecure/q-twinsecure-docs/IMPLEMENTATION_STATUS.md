@@ -59,6 +59,7 @@ Marwan's automatic key supply, bounded matching pools, `web/key-panel.js` and in
 
 ## 4. Update log
 
+- 2026-11-07: With Marwan's key pool available locally, gateway component tests passed 12/12. An isolated test used the actual pool with automatic generation disabled, sensor, gateway and Twin to check multiple readings in one epoch during interruption, empty-pool failure after epoch closure, and recovery with a fresh allocation. The shared runner, dashboard and timed freshness scenario remain unverified end to end.
 Entries below describe the state at each recorded checkpoint. Earlier notes about uncommitted changes and test counts are historical; the component table above summarizes the current combined checkout.
 
 - 2026-11-07: The shared page now loads the gateway panel and passes it gateway status; the runner still returns null. An isolated in-process test with the actual sensor and Twin plus a temporary key passed: a verified reading updated the Twin and a modified message did not. Gateway Python tests passed 11/11; the panel test passed 1/1. No browser, key-pool or shared-runner end-to-end test was performed.
