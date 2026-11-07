@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Q-TwinSecure · Key supply preview</title>
+<style>
+  body { margin:0; background:#edf3f7; color:#172d40; font:16px/1.5 system-ui,sans-serif; }
+  main { max-width:740px; margin:48px auto; padding:0 20px; }
+  .eyebrow { color:#486579; letter-spacing:2px; font-size:12px; font-weight:700; }
+  h1 { font-size:30px; margin:8px 0; }
+  .intro { color:#516778; margin:0 0 24px; }
+  .controls { display:flex; flex-wrap:wrap; gap:8px; margin:20px 0 8px; }
+  button { cursor:pointer; border:1px solid #a7bdcc; border-radius:7px; background:white;
+    padding:10px 14px; color:#172d40; font:inherit; }
+  button:hover { background:#dceaf3; } button:disabled { opacity:.5; cursor:wait; }
+  button:focus-visible { outline:3px solid #167e9b; outline-offset:3px; }
+  #result { min-height:24px; color:#335e70; }
+  .note { color:#516778; font-size:14px; }
+</style>
+<main>
+  <p class="eyebrow">Q-TWINSECURE / MARWAN</p>
+  <h1>Key supply preview</h1>
+  <p class="intro">Independent component demo · automatic key supply · bounded matching pools</p>
+  <div id="key-panel"></div>
+  <div class="controls" aria-label="Independent key-pool demo controls">
+    <button data-action="consume">Allocate a key pair</button>
+    <button data-action="interrupt">Interrupt supply</button>
+    <button data-action="resume">Resume supply</button>
+  </div>
+  <p id="result" role="status"></p>
+  <p class="note">Allocation here demonstrates pool consumption only. This preview does not
+    establish connections, transmit readings or implement the shared committee dashboard.</p>
+</main>
+<script type="module">
+  import { renderKeyPanel } from "/key-panel.js";
+  const root = document.querySelector("#key-panel");
+  const result = document.querySelector("#result");
+  const buttons = [...document.querySelectorAll("button[data-action]")];
+  let pending = false;
+  renderKeyPanel(root, null, { state: "loading" });
+
+  async function request(action) {
+    if (pending) return;
+    pending = true;
+    buttons.forEach(button => { button.disabled = true; });
+    try {
+      const response = await fetch(action ? "/api/key-pool/actions" : "/api/key-pool",
+        action ? { method: "POST", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action }) } : {});
+      if (!response.ok) {
+        result.textContent = `Backend request failed (${response.status}).`;
+        renderKeyPanel(root, null, { state: "unavailable" });
+        return;
+      }
+      const data = await response.json();
+      renderKeyPanel(root, data.key_pool);
+      if (action) result.textContent = data.result;
+    } catch {
+      renderKeyPanel(root, null, { state: "disconnected" });
+      result.textContent = "Cannot reach the preview backend.";
+    } finally {
+      pending = false;
+      buttons.forEach(button => { button.disabled = false; });
+    }
+  }
+  buttons.forEach(button => button.addEventListener("click", () => request(button.dataset.action)));
+  await request();
+  setInterval(() => request(), 500);
+</script>
+</html>
