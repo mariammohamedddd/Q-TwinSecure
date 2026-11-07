@@ -53,6 +53,16 @@ Record agreed decisions here. Add a date, decision, rationale, and consequences 
   such as `generate_keys` in `plan.md` remain optional seeding controls.
 
 ## Pending decisions
+
+### Twin integration branch implementation (2026-11-07)
+
+The user requested completion of the remaining Twin integration tasks. The
+`MARIAM_WAEL` branch adds a small adapter joining existing component interfaces
+and shared runner hooks for Nancy review. Observation age uses a paused datetime
+experiment clock; automatic key supply retains wall-time behavior. Optional
+manual key generation makes tests/scenarios repeatable. External Twin CSS keeps
+the shared server CSP intact. Shared-file review and browser/presenter acceptance
+remain pending; this entry does not claim team-wide phase approval.
 - Confirm final repository folder name.
 - Confirm Python version used by all contributors.
 - Agree exact freshness thresholds.

@@ -24,10 +24,10 @@ This file distinguishes **reported setup**, **drafted code**, **verified impleme
 | Twin gateway | In progress | Standalone decryption implemented and tested locally; integration not started. |
 | AES-GCM protection | In progress | Standalone demo and tests passed locally; end-to-end integration remains outstanding. |
 | TLS 1.3 external PSK | Not started | Optional for this small PoC; do not claim it is implemented. |
-| Digital Twin freshness logic | In progress | Monitor and local preview tested: 10 Python tests and 1 JavaScript DOM-harness test passed on 2026-11-05. Owner panel added. Browser visual review and shared integration pending. |
-| Main end-to-end flow | Not started | |
-| Automated tests | In progress | Latest recorded component checks: 13 sensor Python tests and four JavaScript check groups; 11 gateway Python tests and one panel test; 10 Twin Python tests and one panel test; 20 Marwan Python tests (16 pool and four preview API tests). These are separate component runs; a combined shared-runner end-to-end run remains outstanding. |
-| Normal/interruption/recovery experiment | Not started | |
+| Digital Twin freshness logic | In progress | Real-runner/panel integration, rejection/reset/manual-clock checks implemented and tested locally. 71 Python tests and 4 Twin/shared-app JS tests pass (2026-11-07); browser/team review and commit pending. |
+| Main end-to-end flow | In progress | Real components connected through existing API. Automated scenarios pass; browser/presenter acceptance and shared-hook review pending. |
+| Automated tests | In progress | Combined checkout: 71 Python tests pass with existing venv; 4 Twin/shared-app + 1 gateway JS tests pass. Existing sensor JS check groups also pass. |
+| Normal/interruption/recovery experiment | In progress | Automated real-runner results saved in evidence/twin-scenarios.json. Browser and rehearsal acceptance pending. |
 | ML anomaly detection | Out of current PoC scope | Broader research direction only. |
 | LLM explanations | Out of current PoC scope | Broader research direction only. |
 | Physical QKD / physical sensor | Out of current PoC scope | |
@@ -48,6 +48,23 @@ Use these status labels:
 - `Implemented and tested`
 - `Blocked`
 - `Out of PoC scope`
+
+## Current Twin integration update (2026-11-07)
+
+This update supersedes historical statements below that shared component fields
+are null. Local/uncommitted changes on `MARIAM_WAEL` now expose real sensor,
+key-pool, gateway and Twin state through Nancy's API. `/twin` uses the same API
+for the factory view. Reset clears the Twin; clock advancement controls age;
+only verified and valid readings count as delivered. Default key supply is
+automatic; explicit manual-key mode supports repeatable experiments.
+
+Actual checks with the existing venv (Python 3.13.3, cryptography 50.0.2): 71
+Python tests pass, plus 4 Twin/shared-app and 1 gateway JavaScript tests and the sensor
+panel's four check groups. Evidence is saved under `evidence/twin-*`.
+Browser-host unavailable / Chrome minimized prevented browser review. Browser
+visual/interactions acceptance and Nancy/team review remain pending. No team
+phase acceptance or presenter rehearsal is claimed. See `MARIAM_WAEL.md` for
+startup, scenario and review instructions. Historical checkpoints follow.
 
 ## Dashboard and integration status
 

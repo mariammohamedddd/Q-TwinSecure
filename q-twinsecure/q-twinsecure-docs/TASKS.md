@@ -60,18 +60,18 @@ Local verification on 2026-11-05: 10 sensor tests passed and the independent dem
 
 ## Phase 4 — Twin receiver and freshness
 
-Mariam Wael component update (2026-11-05): monitor, configurable thresholds,
-status snapshot, terminal demo and owner panel implemented locally. Ten Python
-tests and one JavaScript DOM-harness test passed. Run instructions and panel
-handoff are in `MARIAM_WAEL.md`. Shared dashboard integration and authenticated
-pipeline checks remain pending; component review is next. Prepared for component review.
+Mariam Wael update (2026-11-07): monitor/panel connected to the shared runner.
+Real-component and HTTP checks passed, including rejection without Twin update,
+reset and manual-clock freshness transitions. All 71 Python tests and three Twin
+JavaScript tests passed. See `MARIAM_WAEL.md` and `evidence/twin-scenarios.json`.
+Browser visual acceptance and Nancy/team review remain pending; code uncommitted.
 
-- [ ] Accept only successfully authenticated readings.
-- [ ] Store the latest valid reading and receive timestamp.
-- [ ] Calculate observation age.
-- [ ] Implement `CURRENT`, `DELAYED`, and `MISSING`.
-- [ ] Make thresholds configurable.
-- [ ] Test transitions between freshness states.
+- [x] Accept only successfully authenticated readings.
+- [x] Store the latest valid reading and receive timestamp.
+- [x] Calculate observation age.
+- [x] Implement `CURRENT`, `DELAYED`, and `MISSING`.
+- [x] Make thresholds configurable.
+- [x] Test transitions between freshness states.
 
 **Acceptance criteria:** Freshness changes correctly as observations arrive or stop; invalid messages do not update the Twin.
 
@@ -129,3 +129,11 @@ Component integration and scenario controls remain pending. See [Nancy's checkli
 - [ ] Review Phase 2 controls in a browser.
 - [ ] Owners complete independent components, safe-status interfaces and real-data panels.
 - [ ] Pass team Phase 2 review before Phase 3 integration.
+
+## Twin integration review ? 2026-11-07
+
+Backend scenario checks now pass for normal delivery, interruption with an active
+epoch, failed establishment with an empty pool, DELAYED/MISSING and recovery.
+These are automated component/HTTP results; the Phase 5 presenter/browser checklist
+and team review above remain unaccepted. Shared runner hooks are provided for
+Nancy review. No teammate component internals were rewritten.

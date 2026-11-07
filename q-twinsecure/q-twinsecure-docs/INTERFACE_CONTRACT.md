@@ -64,6 +64,43 @@ The versioned status and scenario-control contract for the shared local dashboar
 ## Independence
 Sensor/Twin work uses local sample dictionaries; gateway tests use a local test key and fake key provider; key-pool work uses its own demo. No contributor should need another module to run their own demo.
 
+## Current integration extension (2026-11-07, local branch for review)
+
+This extension supersedes the historical Phase 2 unavailable/null behavior below.
+Existing routes, action payload validation, limits and error shapes are retained.
+Status now has `phase: 3`, `scenario: "MANUAL"`, `integration_ready: true`.
+These indicate code availability, not team/browser acceptance. `/twin` is the
+immersive factory view using the same API as `/`.
+
+- `key_pool`: safe QKDKeyPool.get_status() fields, never raw key material.
+- `sensor`: latest generated reading or null; generating is not delivery.
+- `gateway`: connection state, non-secret epoch ID and verification outcome.
+- `twin`: sensor_id, value_ppm, timestamp, received_at, age_seconds, freshness,
+  current_threshold, missing_threshold. Observation fields are null initially.
+  Age uses observation time; timestamps are timezone-aware ISO strings.
+- `readings_generated`, `readings_delivered`, `readings_rejected`: integer counts.
+  Authentication or Twin validation rejection never increments delivered count.
+- `clock.timestamp`: paused experiment datetime used by both sensor and Twin.
+  Limits and elapsed_seconds retain their Phase 2 semantics.
+- `key_supply_mode`: automatic (default wall-time worker) or manual (explicit
+  `--manual-key-supply` option for seeded scenarios).
+
+Actions are enabled according to real state. Disabled requests return 409 with
+a safe reason and an unavailable event. Start consumes one key for a new epoch;
+send reuses that allocation, authenticates/decrypts, then validates/stores in the
+Twin. Interruption preserves active epochs and queued keys. Reset closes the
+old worker and clears components, clock, counts and events before a reset event.
+Events additionally support `outcome: "rejected"`. No arbitrary reading,
+envelope or tamper payload is exposed through HTTP; tampering is injected in tests.
+
+The runner adapter is `digital_twin/integration.py`. The page loads external
+`/twin-panel.css` and script, retaining `default-src 'self'`. Shared hooks await
+Nancy/team review. CLI `--current-threshold` and `--missing-threshold` configure
+seconds; status records actual values. `create_server(auto_generate=False)`
+provides deterministic test setup. Server shutdown closes the key-pool worker.
+
+## Historical Phase 2 checkpoint
+
 ## Phase 2 control API — Nancy's implemented portion (2026-11-07)
 
 The local runner currently exposes `api_version: 1`, `phase: 2`, `scenario: "NOT_STARTED"`, and `integration_ready: false`. All four component fields and generated/delivered counts remain null until real integration. Existing component interfaces above are unchanged.

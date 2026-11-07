@@ -39,3 +39,41 @@ test('immersive camera supports zoom limits, rotation and reset', () => {
   click('Reset view'); assert.equal(scene.style['--zoom'], '1');
   assert.equal(scene.style['--rotation'], '-35deg');
 });
+
+test('panel displays real runner snapshots and retains accepted value after tampering', () => {
+  const {execFileSync} = require('node:child_process');
+  const snapshots = JSON.parse(execFileSync('python', ['-c', `
+import base64, json
+from unittest.mock import patch
+from main import RunnerState, ActionError
+from gateway.crypto import encrypt_reading
+s = RunnerState(auto_generate=False)
+try:
+    s.apply({'action':'generate_keys','count':1})
+    s.apply({'action':'start_epoch'})
+    s.apply({'action':'send_reading'})
+    accepted = s.status()['twin']
+    def tamper(reading,key):
+        envelope = encrypt_reading(reading,key)
+        data = bytearray(base64.b64decode(envelope['ciphertext']))
+        data[0] ^= 1
+        envelope['ciphertext'] = base64.b64encode(data).decode()
+        return envelope
+    with patch('digital_twin.integration.encrypt_reading',side_effect=tamper):
+        try: s.apply({'action':'send_reading'})
+        except ActionError: pass
+    rejected = s.status()['twin']
+    delayed = s.apply({'action':'advance_time','seconds':6})['twin']
+    missing = s.apply({'action':'advance_time','seconds':10})['twin']
+    reset = s.apply({'action':'reset'})['twin']
+    print(json.dumps([accepted,rejected,delayed,missing,reset]))
+finally: s.close()
+`], {cwd:require('node:path').resolve(__dirname,'..'),encoding:'utf8'}));
+  const root = new Element(); const panel = mountTwinPanel(root);
+  panel.update(snapshots[0]); const acceptedText = text(root);
+  assert.match(acceptedText, /650.0? ppm|650 ppm/);
+  panel.update(snapshots[1]); assert.equal(text(root), acceptedText);
+  panel.update(snapshots[2]); assert.match(text(root), /DELAYED/);
+  panel.update(snapshots[3]); assert.match(text(root), /MISSING/); assert.match(text(root), /650 ppm/);
+  panel.update(snapshots[4]); assert.match(text(root), /no accepted observation/); assert.doesNotMatch(text(root), /650 ppm/);
+});

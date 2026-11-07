@@ -1,6 +1,17 @@
-﻿const connection = document.querySelector('#connection');
+const connection = document.querySelector('#connection');
 import { renderGatewayPanel } from './gateway-panel.js';
 
+const twinPanel = globalThis.mountTwinPanel(document.querySelector('#twin-panel'), {
+  fullScreen: document.body.dataset.layout === 'immersive',
+});
+if (document.body.dataset.layout === 'immersive') {
+  const detailPanel = document.querySelector('.twin-reading-details');
+  const disclosure = document.createElement('details');
+  const summary = document.createElement('summary');
+  summary.textContent = 'Experiment controls';
+  disclosure.append(summary, document.querySelector('[aria-labelledby="controls-title"]'));
+  detailPanel.prepend(disclosure);
+}
 const controls = document.querySelector('#controls');
 const actionError = document.querySelector('#action-error');
 const buttons = [...document.querySelectorAll('[data-action]')];
@@ -19,16 +30,21 @@ function setControls() {
 }
 
 function render(status) {
-  if (status.api_version !== 1 || status.phase !== 2 || !status.actions || !status.clock || !Array.isArray(status.events)) {
+  if (status.api_version !== 1 || status.phase !== 3 || !status.actions || !status.clock || !Array.isArray(status.events)) {
     throw new Error('Unsupported runner contract');
   }
   latestStatus = status;
   online = true;
   renderGatewayPanel(document.querySelector('#gateway-panel'), status.gateway);
-  connection.textContent = 'Local runner connected · Component integration pending';
+  twinPanel.update(status.twin);
+  const key = status.key_pool;
+  document.querySelector('#key-panel').textContent = key ? `Key supply: ${key.supply_enabled ? 'enabled' : 'interrupted'} · ${key.keys_available} available · ${key.keys_generated} generated · ${key.keys_consumed} consumed` : 'Key supply unavailable';
+  document.querySelector('#sensor-panel').textContent = status.sensor ? `Sensor ${status.sensor.sensor_id} · ${status.sensor.value_ppm} ppm · ${status.sensor.timestamp}` : 'Sensor: no generated reading yet';
+  document.querySelector('#scenario-status').textContent = `Manual experiment · ${status.readings_generated} generated · ${status.readings_delivered} delivered · ${status.readings_rejected} rejected`;
+  connection.textContent = 'Local runner connected · Real component state';
   connection.dataset.state = 'connected';
   document.querySelector('#clock-status').textContent = `Experiment clock: ${status.clock.elapsed_seconds} seconds (manual; paused between actions)`;
-  document.querySelector('#action-help').textContent = 'Component actions are unavailable until their owners supply tested interfaces. Clock limit: 86400 seconds; reset to restart.';
+  document.querySelector('#action-help').textContent = `Freshness uses the paused experiment clock; ${status.key_supply_mode === 'automatic' ? 'keys replenish on wall time' : 'keys are generated manually'}. For interruption: pause supply, consume queued keys, then request a new epoch with the pool empty. Clock limit: 86400 seconds.`;
   const events = document.querySelector('#events');
   events.replaceChildren();
   document.querySelector('#event-empty').hidden = status.events.length > 0;
@@ -54,6 +70,7 @@ async function request(path, options = {}) {
 
 function disconnected() {
   online = false;
+  twinPanel.disconnected();
   renderGatewayPanel(document.querySelector('#gateway-panel'), null);
   connection.textContent = 'Disconnected · Local runner unavailable. Check the terminal; retrying automatically. Displayed events may be stale.';
   connection.dataset.state = 'disconnected';

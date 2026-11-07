@@ -1,4 +1,4 @@
-﻿"""Nancy's Phase 2 local control API; domain integration remains pending."""
+"""Local component integration API with authenticated Digital Twin delivery."""
 import argparse
 from collections import deque
 from datetime import datetime, timezone
@@ -6,11 +6,16 @@ import json
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from pathlib import Path
 from urllib.parse import urlsplit
+from digital_twin.integration import TwinPipeline
 
 WEB = Path(__file__).resolve().parent / "web"
 ASSETS = {"/": ("index.html", "text/html; charset=utf-8"),
           "/app.js": ("app.js", "text/javascript; charset=utf-8"),
           "/style.css": ("style.css", "text/css; charset=utf-8"),
+          "/twin": ("twin-live.html", "text/html; charset=utf-8"),
+          "/twin-live.css": ("twin-live.css", "text/css; charset=utf-8"),
+          "/twin-panel.css": ("twin-panel.css", "text/css; charset=utf-8"),
+          "/twin-panel.js": ("twin-panel.js", "text/javascript; charset=utf-8"),
           "/gateway-panel.js": ("gateway-panel.js", "text/javascript; charset=utf-8")}
 ACTIONS = ("reset", "generate_keys", "interrupt_supply", "resume_supply",
            "start_epoch", "end_epoch", "send_reading", "advance_time")
@@ -26,10 +31,19 @@ class ActionError(ValueError):
 
 
 class RunnerState:
-    """Single-server in-memory state. Never contains component secrets."""
-    def __init__(self):
-        self.elapsed_seconds = 0
+    """Single-server state; only safe snapshots cross the public API boundary."""
+    def __init__(self, *, auto_generate=True, current_threshold=5, missing_threshold=15):
+        self.pipeline = TwinPipeline(auto_generate=auto_generate,
+                                     current_threshold=current_threshold,
+                                     missing_threshold=missing_threshold)
         self.events = deque(maxlen=MAX_EVENTS)
+
+    @property
+    def elapsed_seconds(self):
+        return self.pipeline.elapsed_seconds
+
+    def close(self):
+        self.pipeline.close()
 
     def record(self, action, outcome, message):
         self.events.append({"timestamp": datetime.now(timezone.utc).isoformat(),
@@ -37,18 +51,29 @@ class RunnerState:
                             "outcome": outcome, "message": message})
 
     def status(self):
-        available = {action: {"enabled": action in ("reset", "advance_time"),
-                     "reason": None if action in ("reset", "advance_time") else
-                     "Component integration pending; action unavailable in Phase 2."}
-                     for action in ACTIONS}
-        return {"api_version": 1, "phase": 2, "scenario": "NOT_STARTED",
-                "integration_ready": False, "key_pool": None, "sensor": None,
-                "gateway": None, "twin": None, "readings_generated": None,
-                "readings_delivered": None, "events": list(self.events),
-                "clock": {"elapsed_seconds": self.elapsed_seconds,
-                          "max_step_seconds": MAX_STEP_SECONDS,
-                          "max_elapsed_seconds": MAX_ELAPSED_SECONDS},
-                "actions": available}
+        components = self.pipeline.status()
+        connected = components['gateway']['connection_state'] == 'CONNECTED'
+        keys = components['key_pool']
+        reasons = {
+            'start_epoch': ('End the active epoch first.' if connected else
+                            'No key available.' if not keys['keys_available'] else None),
+            'end_epoch': None if connected else 'No active epoch.',
+            'send_reading': None if connected else 'Start an epoch first.',
+            'generate_keys': ('Supply is interrupted.' if not keys['supply_enabled'] else
+                              'Key pool is full.' if keys['keys_available'] >= keys['capacity'] else None),
+            'interrupt_supply': None if keys['supply_enabled'] else 'Supply already interrupted.',
+            'resume_supply': None if not keys['supply_enabled'] else 'Supply already enabled.',
+        }
+        available = {action: {'enabled': reasons.get(action) is None,
+                              'reason': reasons.get(action)} for action in ACTIONS}
+        return {'api_version': 1, 'phase': 3, 'scenario': 'MANUAL',
+                'integration_ready': True, **components, 'events': list(self.events),
+                'clock': {'elapsed_seconds': self.elapsed_seconds,
+                          'max_step_seconds': MAX_STEP_SECONDS,
+                          'max_elapsed_seconds': MAX_ELAPSED_SECONDS,
+                          'timestamp': self.pipeline.now().isoformat()},
+                'key_supply_mode': 'automatic' if self.pipeline.auto_generate else 'manual',
+                'actions': available}
 
     def apply(self, payload):
         if not isinstance(payload, dict) or not isinstance(payload.get("action"), str):
@@ -73,18 +98,45 @@ class RunnerState:
             count = payload["count"]
             if type(count) is not int or not 1 <= count <= 100:
                 raise ActionError("count must be an integer from 1 to 100.")
-        if action not in ("reset", "advance_time"):
-            message = "Component integration pending; action unavailable in Phase 2."
-            self.record(action, "unavailable", message)
-            raise ActionError(message, 409)
-        if action == "reset":
-            self.elapsed_seconds = 0
+        if action == 'reset':
+            self.pipeline.reset()
             self.events.clear()
-            self.record(action, "success", "Local runner state reset; components remain unavailable.")
+            self.record(action, 'success', 'Runner, clock and Twin reset; no observation available.')
+        elif action == 'advance_time':
+            self.pipeline.elapsed_seconds += payload['seconds']
+            self.record(action, 'success', 'Experiment clock advanced; Twin freshness recalculated.')
         else:
-            self.elapsed_seconds += payload["seconds"]
-            self.record(action, "success", "Experiment clock advanced; no component data changed.")
+            reason = self.status()['actions'][action]['reason']
+            if reason:
+                self.record(action, 'unavailable', reason)
+                raise ActionError(reason, 409)
+            try:
+                if action == 'generate_keys':
+                    self.pipeline.pool.generate_keys(payload['count'])
+                elif action == 'interrupt_supply':
+                    self.pipeline.pool.interrupt_supply()
+                elif action == 'resume_supply':
+                    self.pipeline.pool.resume_supply()
+                elif action == 'start_epoch':
+                    self.pipeline.start_epoch()
+                elif action == 'end_epoch':
+                    self.pipeline.end_epoch()
+                elif action == 'send_reading':
+                    self.pipeline.send_reading()
+            except ValueError as error:
+                self.record(action, 'rejected', str(error))
+                raise ActionError(str(error), 409) from None
+            messages = {
+                'generate_keys': 'Key generation requested; safe pool counts updated.',
+                'interrupt_supply': 'Supply interrupted; an existing epoch remains usable.',
+                'resume_supply': 'Supply resumed; automatic generation restarts.',
+                'start_epoch': 'Epoch established using one matching key allocation.',
+                'end_epoch': 'Epoch ended; next connection requires another key.',
+                'send_reading': 'Authenticated reading accepted by the Twin.',
+            }
+            self.record(action, 'success', messages[action])
         return self.status()
+
 
 
 class DashboardHandler(BaseHTTPRequestHandler):
@@ -150,21 +202,44 @@ class DashboardHandler(BaseHTTPRequestHandler):
         pass
 
 
-def create_server(port=8000):
-    server = HTTPServer(("127.0.0.1", port), DashboardHandler)
-    server.state = RunnerState()
+class DashboardServer(HTTPServer):
+    def server_close(self):
+        if hasattr(self, 'state'):
+            self.state.close()
+        super().server_close()
+
+
+def create_server(port=8000, *, auto_generate=True, current_threshold=5, missing_threshold=15):
+    state = RunnerState(auto_generate=auto_generate, current_threshold=current_threshold,
+                        missing_threshold=missing_threshold)
+    try:
+        server = DashboardServer(('127.0.0.1', port), DashboardHandler)
+    except OSError:
+        state.close()
+        raise
+    server.state = state
     return server
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--port", type=int, default=8000)
+    parser.add_argument('--manual-key-supply', action='store_true',
+                        help='Disable automatic generation for a repeatable seeded experiment.')
+    parser.add_argument('--current-threshold', type=float, default=5)
+    parser.add_argument('--missing-threshold', type=float, default=15)
     args = parser.parse_args()
     if not 1 <= args.port <= 65535:
         parser.error("port must be between 1 and 65535")
-    with create_server(args.port) as server:
-        print(f"Q-TwinSecure Phase 2: http://127.0.0.1:{server.server_port}")
-        print("Component integration pending. Press Ctrl+C to stop.")
+    try:
+        server = create_server(args.port, auto_generate=not args.manual_key_supply,
+                               current_threshold=args.current_threshold,
+                               missing_threshold=args.missing_threshold)
+    except ValueError as error:
+        parser.error(str(error))
+    with server:
+        print(f"Q-TwinSecure integrated demo: http://127.0.0.1:{server.server_port}")
+        print("Real components connected. Press Ctrl+C to stop.")
         try:
             server.serve_forever()
         except KeyboardInterrupt:

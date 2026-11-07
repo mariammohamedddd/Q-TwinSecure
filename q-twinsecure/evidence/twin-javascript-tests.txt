@@ -1,0 +1,40 @@
+TAP version 13
+# Subtest: renders actual backend snapshot without treating it as delivery
+ok 1 - renders actual backend snapshot without treating it as delivery
+  ---
+  duration_ms: 132.5543
+  type: 'test'
+  ...
+# Subtest: shared app forwards real Twin status, counters and disconnects to the panel
+ok 2 - shared app forwards real Twin status, counters and disconnects to the panel
+  ---
+  duration_ms: 236.084
+  type: 'test'
+  ...
+# Subtest: Twin panel handles loading, empty, real status, expiration and disconnect
+ok 3 - Twin panel handles loading, empty, real status, expiration and disconnect
+  ---
+  duration_ms: 26.9255
+  type: 'test'
+  ...
+# Subtest: immersive camera supports zoom limits, rotation and reset
+ok 4 - immersive camera supports zoom limits, rotation and reset
+  ---
+  duration_ms: 2.1381
+  type: 'test'
+  ...
+# Subtest: panel displays real runner snapshots and retains accepted value after tampering
+ok 5 - panel displays real runner snapshots and retains accepted value after tampering
+  ---
+  duration_ms: 558.6296
+  type: 'test'
+  ...
+1..5
+# tests 5
+# suites 0
+# pass 5
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1898.3489
