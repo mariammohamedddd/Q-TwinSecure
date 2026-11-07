@@ -31,7 +31,7 @@ class TwinPipeline:
         self.elapsed_seconds = 0
         self.anchor = datetime.now(timezone.utc)
         self.pool = QKDKeyPool(auto_generate=self.auto_generate)
-        self.sensor = CO2SensorSimulator(values=[650, 675, 660], clock=self.now)
+        self.sensor = CO2SensorSimulator(seed=42, clock=self.now)
         self.gateway = GatewayStatus()
         self.twin = TwinMonitor(self.current_threshold, self.missing_threshold, clock=self.now)
         self._allocation = None
@@ -69,11 +69,15 @@ class TwinPipeline:
             raise ValueError('Reading rejected; previous Twin observation retained.') from None
         self.delivered += 1
 
+    def generate_reading(self):
+        reading = self.sensor.read()
+        self.generated += 1
+        return reading
+
     def send_reading(self):
         if self._allocation is None:
             raise ValueError('No active epoch; reading was not generated or delivered.')
-        reading = self.sensor.read()
-        self.generated += 1
+        reading = self.generate_reading()
         self.accept_envelope(encrypt_reading(reading, self._allocation.device_key))
 
     def status(self):

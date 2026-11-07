@@ -1,5 +1,5 @@
 .\venv\Scripts\python.exe : test_advance_and_reset (test_dashboard.DashboardTests.test_advance_and_reset) ... ok
-At line:3 char:1
+At line:2 char:1
 + .\venv\Scripts\python.exe -m unittest discover -s tests -v *> evidenc ...
 + ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     + CategoryInfo          : NotSpecified: (test_advance_an...d_reset) ... ok:String) [], RemoteException
@@ -12,6 +12,8 @@ test_invalid_actions_cannot_mutate_state_or_echo_input
 test_loopback_binding (test_dashboard.DashboardTests.test_loopback_binding) ... ok
 test_page_and_assets (test_dashboard.DashboardTests.test_page_and_assets) ... ok
 test_request_validation (test_dashboard.DashboardTests.test_request_validation) ... ok
+test_sensor_uses_experiment_clock_without_claiming_delivery 
+(test_dashboard.DashboardTests.test_sensor_uses_experiment_clock_without_claiming_delivery) ... ok
 test_status_does_not_fabricate_component_results 
 (test_dashboard.DashboardTests.test_status_does_not_fabricate_component_results) ... ok
 test_unknown_paths_cannot_read_project_files 
@@ -19,6 +21,9 @@ test_unknown_paths_cannot_read_project_files
 test_clock_total_limit_and_reset_recovery (test_dashboard.RunnerStateTests.test_clock_total_limit_and_reset_recovery) 
 ... ok
 test_event_history_bound_and_status_copy (test_dashboard.RunnerStateTests.test_event_history_bound_and_status_copy) 
+... ok
+test_key_pool_epoch_interruption_and_recovery 
+(test_gateway_component_integration.GatewayComponentIntegrationTests.test_key_pool_epoch_interruption_and_recovery) 
 ... ok
 test_verified_reading_updates_twin_and_tampering_does_not (test_gateway_component_integration.GatewayComponentIntegrati
 onTests.test_verified_reading_updates_twin_and_tampering_does_not) ... ok
@@ -80,23 +85,23 @@ test_sequence_cycles_and_zero_count (test_sensor.SensorTests.test_sequence_cycle
 test_status_is_defensive_and_does_not_generate 
 (test_sensor.SensorTests.test_status_is_defensive_and_does_not_generate) ... ok
 test_page_and_assets (test_sensor_dashboard.DashboardTests.test_page_and_assets) ... 127.0.0.1 - - [07/Nov/2026 
-20:45:20] "GET / HTTP/1.1" 200 -
-127.0.0.1 - - [07/Nov/2026 20:45:20] "GET /sensor-panel.js HTTP/1.1" 200 -
-127.0.0.1 - - [07/Nov/2026 20:45:20] "GET /sensor-panel.css HTTP/1.1" 200 -
+21:32:44] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [07/Nov/2026 21:32:44] "GET /sensor-panel.js HTTP/1.1" 200 -
+127.0.0.1 - - [07/Nov/2026 21:32:44] "GET /sensor-panel.css HTTP/1.1" 200 -
 ok
 test_status_matches_actual_sensor_and_does_not_oversample 
 (test_sensor_dashboard.DashboardTests.test_status_matches_actual_sensor_and_does_not_oversample) ... 127.0.0.1 - - 
-[07/Nov/2026 20:45:20] "GET /api/status HTTP/1.1" 200 -
-127.0.0.1 - - [07/Nov/2026 20:45:20] "GET /api/status HTTP/1.1" 200 -
+[07/Nov/2026 21:32:44] "GET /api/status HTTP/1.1" 200 -
+127.0.0.1 - - [07/Nov/2026 21:32:44] "GET /api/status HTTP/1.1" 200 -
 ok
 test_unknown_paths_cannot_read_project_files 
 (test_sensor_dashboard.DashboardTests.test_unknown_paths_cannot_read_project_files) ... 127.0.0.1 - - [07/Nov/2026 
-20:45:21] code 404, message Not Found
-127.0.0.1 - - [07/Nov/2026 20:45:21] "GET /../main.py HTTP/1.1" 404 -
-127.0.0.1 - - [07/Nov/2026 20:45:21] code 404, message Not Found
-127.0.0.1 - - [07/Nov/2026 20:45:21] "GET /main.py HTTP/1.1" 404 -
-127.0.0.1 - - [07/Nov/2026 20:45:21] code 404, message Not Found
-127.0.0.1 - - [07/Nov/2026 20:45:21] "GET /api/actions HTTP/1.1" 404 -
+21:32:45] code 404, message Not Found
+127.0.0.1 - - [07/Nov/2026 21:32:45] "GET /../main.py HTTP/1.1" 404 -
+127.0.0.1 - - [07/Nov/2026 21:32:45] code 404, message Not Found
+127.0.0.1 - - [07/Nov/2026 21:32:45] "GET /main.py HTTP/1.1" 404 -
+127.0.0.1 - - [07/Nov/2026 21:32:45] code 404, message Not Found
+127.0.0.1 - - [07/Nov/2026 21:32:45] "GET /api/actions HTTP/1.1" 404 -
 ok
 test_authenticated_but_invalid_reading_is_not_accepted 
 (test_twin_integration.IntegratedTwinTests.test_authenticated_but_invalid_reading_is_not_accepted) ... ok
@@ -126,6 +131,6 @@ test_transitions_and_boundaries (test_twin_monitor.TwinMonitorTests.test_transit
 test_live_backend_updates_are_exposed (test_twin_preview.PreviewTests.test_live_backend_updates_are_exposed) ... ok
 
 ----------------------------------------------------------------------
-Ran 71 tests in 6.863s
+Ran 73 tests in 6.887s
 
 OK

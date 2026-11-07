@@ -138,7 +138,7 @@ class IntegratedTwinTests(unittest.TestCase):
             action('generate_keys', count=1)
             action('start_epoch')
             accepted = action('send_reading')
-            self.assertEqual(accepted['twin']['value_ppm'], 650)
+            self.assertEqual(accepted['twin']['value_ppm'], accepted['sensor']['value_ppm'])
             self.assertEqual(action('advance_time', seconds=6)['twin']['freshness'], 'DELAYED')
             self.assertEqual(action('advance_time', seconds=10)['twin']['freshness'], 'MISSING')
             self.assertEqual(action('reset')['twin']['freshness'], 'MISSING')

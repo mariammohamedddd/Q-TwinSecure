@@ -157,7 +157,7 @@ pool must be empty to demonstrate failed new-epoch establishment.
 
 ### Validation and remaining acceptance
 
-- All **71 Python tests** passed using the existing venv (Python 3.13.3).
+- All **73 Python tests** passed using the existing venv (Python 3.13.3).
 - **4 Twin/shared-app JavaScript tests + 1 gateway panel test** passed with the venv on PATH;
   the existing sensor panel's four check groups also passed.
 - Real-runner checks cover repeated readings on one key, interruption, empty
@@ -172,5 +172,7 @@ Remaining: browser visual/interactions review (desktop/mobile, zoom/rotation,
 empty/disconnected/recovery and no overlaps), then Nancy/team review of shared
 hooks. Browser automation was attempted but its browser host was unavailable;
 the native Chrome fallback could not inspect the minimized window. No browser
-acceptance or presentation rehearsal is claimed. Changes are local/uncommitted.
+acceptance or presentation rehearsal is claimed. Integration committed for the requested main merge.
 Stop here for review rather than declaring the team-wide phase accepted.
+
+Latest main compatibility: the sensor owner panel and seeded generator are retained. Advancing time generates one sensor reading without delivering it; only Send reading delivers through the active authenticated epoch. Combined validation passed 73 Python tests, 5 JavaScript tests and the sensor shared-app checks.

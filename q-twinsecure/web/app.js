@@ -1,5 +1,6 @@
 const connection = document.querySelector('#connection');
 import { renderGatewayPanel } from './gateway-panel.js';
+import './sensor-panel.js';
 
 const twinPanel = globalThis.mountTwinPanel(document.querySelector('#twin-panel'), {
   fullScreen: document.body.dataset.layout === 'immersive',
@@ -39,8 +40,8 @@ function render(status) {
   twinPanel.update(status.twin);
   const key = status.key_pool;
   document.querySelector('#key-panel').textContent = key ? `Key supply: ${key.supply_enabled ? 'enabled' : 'interrupted'} · ${key.keys_available} available · ${key.keys_generated} generated · ${key.keys_consumed} consumed` : 'Key supply unavailable';
-  document.querySelector('#sensor-panel').textContent = status.sensor ? `Sensor ${status.sensor.sensor_id} · ${status.sensor.value_ppm} ppm · ${status.sensor.timestamp}` : 'Sensor: no generated reading yet';
-  document.querySelector('#scenario-status').textContent = `Manual experiment · ${status.readings_generated} generated · ${status.readings_delivered} delivered · ${status.readings_rejected} rejected`;
+  document.querySelector('co2-sensor-panel').update(status.sensor);
+  document.querySelector('#scenario-status').textContent = `Manual experiment · ${status.readings_generated} sensor readings generated · ${status.readings_delivered} delivered · ${status.readings_rejected} rejected`;
   connection.textContent = 'Local runner connected · Real component state';
   connection.dataset.state = 'connected';
   document.querySelector('#clock-status').textContent = `Experiment clock: ${status.clock.elapsed_seconds} seconds (manual; paused between actions)`;
@@ -71,6 +72,7 @@ async function request(path, options = {}) {
 function disconnected() {
   online = false;
   twinPanel.disconnected();
+  document.querySelector('co2-sensor-panel').unavailable();
   renderGatewayPanel(document.querySelector('#gateway-panel'), null);
   connection.textContent = 'Disconnected · Local runner unavailable. Check the terminal; retrying automatically. Displayed events may be stale.';
   connection.dataset.state = 'disconnected';

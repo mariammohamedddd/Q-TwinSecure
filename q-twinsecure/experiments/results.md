@@ -5,7 +5,7 @@
 Local MARIAM_WAEL branch, existing venv: Python 3.13.3, cryptography 50.0.2.
 These results supersede older null-component checkpoints below.
 
-- 71 Python tests passed, including real HTTP and integrated Twin scenarios.
+- 73 Python tests passed, including real HTTP and integrated Twin scenarios.
 - 4 Twin/shared-app + 1 gateway JavaScript tests passed; Twin rendering uses real runner
   snapshots and preserves the accepted display after tampering.
 - Existing sensor JavaScript tests passed four check groups.
@@ -26,7 +26,7 @@ Additional checks reject tampered and authenticated-but-invalid observations
 without changing Twin status or delivered count. Browser visual/interactions
 review is NOT VERIFIED: browser host unavailable and native Chrome minimized.
 Shared-file review and presenter acceptance remain pending. No screenshots or
-team phase acceptance are claimed. Changes are uncommitted.
+team phase acceptance are claimed. Integration committed for the requested main merge.
 
 ## Historical Nancy foundation results
 

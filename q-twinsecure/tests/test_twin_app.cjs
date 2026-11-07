@@ -22,6 +22,7 @@ finally:s.close()
   const element = () => ({textContent:'',dataset:{},hidden:false,disabled:false,
     replaceChildren(){},append(){}});
   const document = {body:{dataset:{}},querySelector(selector){
+    if (selector === 'co2-sensor-panel') return {update(){},unavailable(){}};
     if (!elements.has(selector)) elements.set(selector,element());
     return elements.get(selector);
   },querySelectorAll(){return [];},createElement:element};
@@ -32,13 +33,14 @@ finally:s.close()
     setInterval(fn){poll=fn;},
     async fetch(){if(offline) throw new Error('offline');return {ok:true,json:async()=>snapshot};}};
   const source=fs.readFileSync(path.resolve(__dirname,'../web/app.js'),'utf8')
-    .replace("import { renderGatewayPanel } from './gateway-panel.js';",'');
+    .replace("import { renderGatewayPanel } from './gateway-panel.js';",'')
+    .replace("import './sensor-panel.js';",'');
   vm.runInNewContext(source,context);
   await new Promise(resolve=>setImmediate(resolve));
   assert.equal(calls.length,1);
   assert.deepEqual(calls[0],snapshot.twin);
   assert.match(elements.get('#scenario-status').textContent,/1 delivered/);
-  assert.match(elements.get('#sensor-panel').textContent,/650 ppm/);
+  assert.equal(calls[0].value_ppm,snapshot.sensor.value_ppm);
   offline=true; await poll();
   assert.equal(disconnected,1);
   assert.equal(elements.get('#controls').disabled,true);

@@ -19,10 +19,10 @@
     <section aria-labelledby="pipeline-title"><h2 id="pipeline-title">Monitoring pipeline</h2>
       <div class="grid">
         <article id="key-panel"><span class="eyebrow">01 / MARWAN</span><h3>Key supply</h3><p class="empty">Not connected</p><p>Supply state and key counts await backend integration.</p></article>
-        <article id="sensor-panel"><span class="eyebrow">02 / MARIAM MOHAMED</span><h3>CO₂ sensor</h3><p class="empty">No reading available</p><p>Value, sensor ID and timestamp await backend integration.</p></article>
         <article id="gateway-panel"><span class="eyebrow">03 / KAREEM</span><h3>Protected gateway</h3><p class="empty">Not connected</p><p>Epoch and verification state await backend integration.</p></article>
         <article id="twin-panel"><span class="eyebrow">04 / MARIAM WAEL</span><h3>Digital Twin</h3><p class="empty">No accepted observation</p><p>Age and freshness await backend integration.</p></article>
       </div>
+      <section id="sensor-panel" aria-labelledby="sensor-title"><h3 id="sensor-title">02 / MARIAM MOHAMED · Sensor observatory</h3><p>Advance the experiment clock to generate a sensor observation. Generated readings are not yet securely delivered.</p><co2-sensor-panel></co2-sensor-panel></section>
     </section>
     <section aria-labelledby="controls-title"><h2 id="controls-title">Scenario controls <span class="tag">NANCY</span></h2>
       <p>Generate or wait for keys, start an epoch, and send a reading. Advance the experiment clock to observe freshness. <a href="/twin">Open full-screen factory view</a>.</p>

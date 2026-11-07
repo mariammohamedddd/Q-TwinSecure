@@ -40,6 +40,7 @@ class DashboardTests(unittest.TestCase):
     def test_page_and_assets(self):
         for path, expected in [("/", "text/html"), ("/app.js", "text/javascript"),
                                ("/style.css", "text/css"), ("/twin", "text/html"),
+                               ("/sensor-panel.js", "text/javascript"), ("/sensor-panel.css", "text/css"),
                                ("/twin-panel.js", "text/javascript"), ("/twin-panel.css", "text/css"),
                                ("/twin-live.css", "text/css")]:
             with self.subTest(path=path):
@@ -77,6 +78,28 @@ class DashboardTests(unittest.TestCase):
         self.assertEqual(len(status['events']), 1)
         self.assertEqual(status['events'][0]['action'], 'reset')
         self.assertEqual(status['readings_delivered'], 0)
+
+    def test_sensor_uses_experiment_clock_without_claiming_delivery(self):
+        from datetime import datetime, timedelta
+        origin = self.server.state.pipeline.anchor
+        code, first = self.action({'action':'advance_time','seconds':5})
+        self.assertEqual(code, 200)
+        self.assertEqual(datetime.fromisoformat(first['sensor']['timestamp']), origin + timedelta(seconds=5))
+        self.assertEqual(first['readings_generated'], 1)
+        self.assertEqual(first['readings_delivered'], 0)
+        self.assertIsNone(first['twin']['timestamp'])
+        for _ in range(2):
+            _, _, raw = self.request('/api/status')
+            self.assertEqual(json.loads(raw)['sensor'], first['sensor'])
+            self.assertEqual(json.loads(raw)['readings_generated'], 1)
+        _, second = self.action({'action':'advance_time','seconds':3})
+        self.assertEqual(second['readings_generated'], 2)
+        self.server.state.status()['sensor']['value_ppm'] = -1
+        self.assertGreaterEqual(self.server.state.status()['sensor']['value_ppm'], 400)
+        _, reset = self.action({'action':'reset'})
+        self.assertIsNone(reset['sensor'])
+        self.assertEqual(reset['readings_generated'], 0)
+        self.assertEqual(reset['readings_delivered'], 0)
 
     def test_component_actions_explicitly_unavailable(self):
         for action in ('resume_supply', 'start_epoch', 'end_epoch', 'send_reading'):

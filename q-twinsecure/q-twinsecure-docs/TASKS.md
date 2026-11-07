@@ -44,7 +44,7 @@ remain outstanding. These checks do not complete the integrated plan's phases.
 
 **Acceptance criteria:** The simulator produces valid timestamped readings without requiring hardware.
 
-Local verification on 2026-11-05: 10 sensor tests passed and the independent demo printed five shared-contract readings using Python 3.14. See `sensor/README.md`. Reusable sensor dashboard panel and standalone Python-backed preview are now saved. Follow-up validation passed 13 Python tests and four JavaScript check groups. Browser visual verification and connection to Nancy's shared runner remain pending; no shared integration is claimed.
+Local verification on 2026-11-05: 10 sensor tests passed and the independent demo printed five shared-contract readings using Python 3.14. See `sensor/README.md`. Reusable sensor dashboard panel and standalone Python-backed preview are now saved. Follow-up validation passed 13 Python tests and four JavaScript check groups. Shared sensor runner integration is now tested: real status, manual-clock generation, reset and disconnected/recovery rendering. Final checks on 2026-11-07 passed 66 Python tests, sensor JavaScript checks plus a shared-app snapshot check, and three gateway/Twin JavaScript tests. Browser visual verification and protected-delivery integration remain pending.
 
 ## Phase 3 — Secure message / gateway
 
@@ -62,9 +62,9 @@ Local verification on 2026-11-05: 10 sensor tests passed and the independent dem
 
 Mariam Wael update (2026-11-07): monitor/panel connected to the shared runner.
 Real-component and HTTP checks passed, including rejection without Twin update,
-reset and manual-clock freshness transitions. All 71 Python tests and three Twin
+reset and manual-clock freshness transitions. All 73 Python tests and three Twin
 JavaScript tests passed. See `MARIAM_WAEL.md` and `evidence/twin-scenarios.json`.
-Browser visual acceptance and Nancy/team review remain pending; code uncommitted.
+Browser visual acceptance and Nancy/team review remain pending; integration prepared for the requested merge.
 
 - [x] Accept only successfully authenticated readings.
 - [x] Store the latest valid reading and receive timestamp.

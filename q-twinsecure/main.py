@@ -16,6 +16,8 @@ ASSETS = {"/": ("index.html", "text/html; charset=utf-8"),
           "/twin-live.css": ("twin-live.css", "text/css; charset=utf-8"),
           "/twin-panel.css": ("twin-panel.css", "text/css; charset=utf-8"),
           "/twin-panel.js": ("twin-panel.js", "text/javascript; charset=utf-8"),
+          "/sensor-panel.js": ("sensor-panel.js", "text/javascript; charset=utf-8"),
+          "/sensor-panel.css": ("sensor-panel.css", "text/css; charset=utf-8"),
           "/gateway-panel.js": ("gateway-panel.js", "text/javascript; charset=utf-8")}
 ACTIONS = ("reset", "generate_keys", "interrupt_supply", "resume_supply",
            "start_epoch", "end_epoch", "send_reading", "advance_time")
@@ -104,7 +106,8 @@ class RunnerState:
             self.record(action, 'success', 'Runner, clock and Twin reset; no observation available.')
         elif action == 'advance_time':
             self.pipeline.elapsed_seconds += payload['seconds']
-            self.record(action, 'success', 'Experiment clock advanced; Twin freshness recalculated.')
+            self.pipeline.generate_reading()
+            self.record(action, 'success', 'Clock advanced; sensor reading generated, not delivered; Twin freshness recalculated.')
         else:
             reason = self.status()['actions'][action]['reason']
             if reason:
@@ -153,6 +156,18 @@ class DashboardHandler(BaseHTTPRequestHandler):
     def json_response(self, status, payload):
         self.respond(status, json.dumps(payload, allow_nan=False).encode())
 
+    def reject_request(self, status, payload):
+        """Drain a bounded rejected body so Windows can receive the HTTP error."""
+        try:
+            length = int(self.headers.get("Content-Length", "0"))
+            if length > 0:
+                self.connection.settimeout(3)
+                self.rfile.read(min(length, 4097))
+        except (ValueError, OSError):
+            # Invalid/incomplete bodies still receive the original rejection.
+            pass
+        self.json_response(status, payload)
+
     def do_GET(self):
         path = urlsplit(self.path).path
         if path == "/api/status":
@@ -166,23 +181,25 @@ class DashboardHandler(BaseHTTPRequestHandler):
     def do_POST(self):
         self.close_connection = True
         if urlsplit(self.path).path != "/api/actions":
-            self.json_response(404, {"error": "Not found"})
+            self.reject_request(404, {"error": "Not found"})
             return
         expected_origin = f"http://127.0.0.1:{self.server.server_port}"
         origin = self.headers.get("Origin")
         if origin is not None and origin != expected_origin:
-            self.json_response(403, {"error": "Use the local dashboard origin."})
+            self.reject_request(403, {"error": "Use the local dashboard origin."})
             return
         if self.headers.get_content_type() != "application/json":
-            self.json_response(415, {"error": "Content-Type must be application/json."})
+            self.reject_request(415, {"error": "Content-Type must be application/json."})
             return
         if self.headers.get("Transfer-Encoding") is not None:
-            self.json_response(400, {"error": "Transfer encoding is unsupported."})
+            self.reject_request(400, {"error": "Transfer encoding is unsupported."})
             return
         try:
             length = int(self.headers.get("Content-Length", "0"))
             if not 1 <= length <= 4096:
-                raise ActionError("Request body must be between 1 and 4096 bytes.", 413)
+                self.reject_request(413, {"error": "Request body must be between 1 and 4096 bytes.",
+                                          "status": self.server.state.status()})
+                return
             self.connection.settimeout(3)
             raw = self.rfile.read(length)
             if len(raw) != length:

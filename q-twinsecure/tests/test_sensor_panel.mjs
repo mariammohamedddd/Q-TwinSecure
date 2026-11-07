@@ -63,3 +63,5 @@ stop = startSensorPolling(panel, { interval: 10000 });
 await flush(); stop();
 assert.equal(panel.field('connection').dataset.state, 'offline');
 console.log('PASS polling success, failure and cleanup');
+
+export { panel };

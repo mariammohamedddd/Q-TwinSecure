@@ -71,9 +71,9 @@ finally: s.close()
 `], {cwd:require('node:path').resolve(__dirname,'..'),encoding:'utf8'}));
   const root = new Element(); const panel = mountTwinPanel(root);
   panel.update(snapshots[0]); const acceptedText = text(root);
-  assert.match(acceptedText, /650.0? ppm|650 ppm/);
+  assert.ok(acceptedText.includes(`${snapshots[0].value_ppm} ppm`));
   panel.update(snapshots[1]); assert.equal(text(root), acceptedText);
   panel.update(snapshots[2]); assert.match(text(root), /DELAYED/);
-  panel.update(snapshots[3]); assert.match(text(root), /MISSING/); assert.match(text(root), /650 ppm/);
-  panel.update(snapshots[4]); assert.match(text(root), /no accepted observation/); assert.doesNotMatch(text(root), /650 ppm/);
+  panel.update(snapshots[3]); assert.match(text(root), /MISSING/); assert.ok(text(root).includes(`${snapshots[0].value_ppm} ppm`));
+  panel.update(snapshots[4]); assert.match(text(root), /no accepted observation/); assert.ok(!text(root).includes(`${snapshots[0].value_ppm} ppm`));
 });
