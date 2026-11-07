@@ -18,7 +18,7 @@ This file distinguishes **reported setup**, **drafted code**, **verified impleme
 
 | Component | Status | Notes |
 |---|---|---|
-| CO₂ sensor simulator | In progress | Independent backend and reusable sensor panel saved; 13 Python tests and four JavaScript check groups passed. Standalone HTTP preview uses real simulator data. Included in this branch; shared-runner integration and browser visual verification pending. |
+| CO₂ sensor simulator | In progress | Independent backend and reusable sensor panel saved; 13 Python tests and four JavaScript check groups passed. Standalone HTTP preview uses real simulator data. Shared sensor status and panel wiring now tested with the runner; browser visual verification and protected-delivery integration pending. |
 | Emulated QKD key pool | In progress | Automatic interval-based supply, backend and demo verified locally on branch `Marwan`: 16 pool tests passed. Hard capacity rejects extra keys without replacing stored records. Included in this rebase; shared integration and browser visual verification remain outstanding. See `qkd/README.md`. |
 | Device gateway | In progress | Standalone encryption implemented and tested locally; integration not started. |
 | Twin gateway | In progress | Standalone decryption implemented and tested locally; integration not started. |
@@ -83,3 +83,9 @@ Entries below describe the state at each recorded checkpoint. Earlier notes abou
 User reported Phase 1 working and authorized Phase 2. Nancy's shared control foundation is saved and tested locally, included in Nancy's dashboard contribution. It supports validated reset/advance-time requests, bounded manual clock, action availability metadata, timestamped safe events, and frontend control/error/disconnected handling. All component fields remain unavailable; no connection or delivery is claimed.
 
 Actual checks at Nancy's Phase 2 checkpoint: `py -B -m unittest discover -s tests -v` passed 16 tests (10 dashboard/state and 6 gateway); `node --check web/app.js` passed. Browser review of Phase 2 interactions remains pending. Those checks preceded the merged component contributions and are not a result for the current combined checkout. The checkout now includes the independent sensor, key-pool, gateway and Twin implementations and their owner panels, with component evidence recorded above. Shared-runner domain integration remains pending. Team-wide Phase 2 completion depends on owners' component/panel work and review; the shared Phase 3 scenario is not implemented. See updated interface contract and experiment checklist.
+
+## Sensor shared-runner integration — 2026-11-07
+
+The shared page now mounts the real sensor panel, serves its assets, and updates it through the existing status loop. Advance time generates one Python observation using the manual experiment clock; reset clears it. GET status is read-only. Generated counts are real; delivery counts remain unavailable and send_reading is disabled. The shared HTTP rejection path now drains at most 4097 bytes before early rejection to avoid Windows client connection resets.
+
+Validation: final full Python suite passed 66 tests using Python 3.14 and cryptography 50.0.2 in an ignored .venv. JavaScript sensor checks passed four groups plus one shared-app check against actual RunnerState snapshots; gateway/Twin Node tests passed 3 tests; app.js syntax passed. Initial full-suite runs exposed Windows socket aborts in rejected-body tests; the shared API was fixed, and an unchanged key-preview socket failure passed on rerun. Browser visual QA is unavailable in this session; no browser or full secure-delivery scenario acceptance is claimed. Earlier all-components-null notes describe prior checkpoints.

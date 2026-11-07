@@ -66,7 +66,7 @@ Sensor/Twin work uses local sample dictionaries; gateway tests use a local test 
 
 ## Phase 2 control API — Nancy's implemented portion (2026-11-07)
 
-The local runner currently exposes `api_version: 1`, `phase: 2`, `scenario: "NOT_STARTED"`, and `integration_ready: false`. All four component fields and generated/delivered counts remain null until real integration. Existing component interfaces above are unchanged.
+The local runner currently exposes `api_version: 1`, `phase: 2`, `scenario: "NOT_STARTED"`, and `integration_ready: false`. The sensor field starts null and exposes the latest real simulator reading after advance_time. readings_generated starts at zero; key_pool, gateway, twin and readings_delivered remain null. Full secure-delivery integration remains pending. Existing component interfaces above are unchanged.
 
 `GET /api/status` also supplies:
 - `clock`: `elapsed_seconds`, `max_step_seconds` (3600), `max_elapsed_seconds` (86400). This is a manual elapsed experiment clock, paused between actions; event timestamps separately use UTC wall time.
@@ -81,8 +81,12 @@ The local runner currently exposes `api_version: 1`, `phase: 2`, `scenario: "NOT
 {"action": "generate_keys", "count": 1}
 ```
 
-The lines above are separate request examples. `seconds` must be an integer from 1 to 3600 and total elapsed time cannot exceed 86400. `count` must be an integer from 1 to 100; generation remains unavailable. Other known actions (`interrupt_supply`, `resume_supply`, `start_epoch`, `end_epoch`, `send_reading`) accept only the action field and remain unavailable. Extra/missing fields, unknown actions, and booleans as integers are rejected. Reset clears runner clock/history and adds a reset event; it performs no component operations yet.
+The lines above are separate request examples. `seconds` must be an integer from 1 to 3600 and total elapsed time cannot exceed 86400. `count` must be an integer from 1 to 100; generation remains unavailable. Other known actions (`interrupt_supply`, `resume_supply`, `start_epoch`, `end_epoch`, `send_reading`) accept only the action field and remain unavailable. Extra/missing fields, unknown actions, and booleans as integers are rejected. Reset clears runner clock/history and adds a reset event; it also resets the sensor, generated count and observation history.
 
 Success returns status directly (200). Validation errors return `{error, status}` (400); known unavailable actions return the same shape (409) and add an unavailable event. Unsupported content type (415), excessive/empty body (413), unsupported transfer encoding (400), bad origin (403), timeout (408), and unknown route (404) return clear errors, but may omit status. If the browser sends Origin, it must exactly match the printed loopback origin. The server binds to 127.0.0.1 and serializes requests; there is no production authentication or network deployment.
 
 The frontend disables controls during requests and disconnection, reports action errors separately, and does not automatically retry mutations after a timeout. Domain integration and real-data panels remain owner follow-up work; phase metadata must not be mistaken for completion of the team-wide review gate.
+
+## Sensor integration — 2026-11-07
+
+Each successful advance_time generates exactly one reading, timestamped at reset-time UTC origin plus elapsed experiment seconds. GET status does not generate observations. Sensor generation is independent of protected delivery: send_reading remains disabled and readings_delivered remains null. The shared status loop updates the sensor custom element, including reset/empty and disconnected states. No separate sensor poller runs on the shared page.

@@ -1,4 +1,4 @@
-﻿# CO2 sensor simulator
+# CO2 sensor simulator
 
 From the `q-twinsecure` directory (Python 3.10+, standard library only):
 
@@ -21,7 +21,7 @@ Calling status does not generate data. Batch reads are immediate; scheduling
 belongs to the runner. This simulator performs no transmission, protection,
 key allocation or freshness calculation, and models no physical sensor.
 
-The shared experiment runner/API do not yet exist. The sensor panel now has
+The shared experiment runner now exposes sensor status. The sensor panel also has
 its own standalone preview, using real data from this Python simulator.
 
 Verified locally on 2026-11-05 with Python 3.14: 10 tests passed and the demo
@@ -89,6 +89,28 @@ node tests/test_sensor_panel.mjs
 sample rate limiting and unknown-route rejection). Four JavaScript check groups
 passed for validation, rendering, chart bounds, reset, disconnection, recovery
 and polling cleanup using a minimal DOM adapter. These are not browser rendering
-tests. Browser appearance, responsive layout and integration with Nancy's runner
-still require manual verification. To check recovery, stop the preview, wait for
+tests. Browser appearance and responsive layout
+still require manual verification. Shared runner wiring is tested as recorded below. To check recovery, stop the preview, wait for
 Disconnected, then restart it and confirm readings resume.
+
+## Shared dashboard (2026-11-07)
+
+From `q-twinsecure/`, run `py -3.14 -B main.py` and open
+http://127.0.0.1:8000. Click **Advance time** to generate one real simulator
+reading per successful action. Timestamps use reset-time UTC origin plus manual
+elapsed seconds. Status polling generates no data. **Reset** clears the sensor,
+generated count and chart. The existing shared poller updates the panel and its
+disconnected/recovery states; no second poller runs. `send_reading` stays disabled
+and delivery remains unavailable until protected-delivery integration is done.
+
+The standalone preview above remains available independently. The shared panel
+is mounted in `web/index.html`; `web/app.js` passes `status.sensor` directly into
+it. To check shared rendering with real Python snapshots:
+
+```powershell
+$env:PYTHON = (Resolve-Path .venv/Scripts/python.exe).Path
+node tests/test_sensor_shared.mjs
+```
+
+Shared HTTP integration and DOM-adapter tests pass; browser visual review remains
+pending. No full secure-delivery experiment is claimed.
