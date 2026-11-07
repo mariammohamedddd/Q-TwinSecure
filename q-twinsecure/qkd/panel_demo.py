@@ -42,6 +42,16 @@ def create_server(port: int = 8765, capacity: int = 3,
                 self.json_response(404, error="Not found")
 
         def do_POST(self) -> None:
+            # Drain bounded small requests before early rejection so Windows
+            # does not reset the connection while the error response is sent.
+            self.close_connection = True
+            self.connection.settimeout(3)
+            try:
+                length = int(self.headers.get("Content-Length", "0"))
+                raw = self.rfile.read(length) if 0 < length <= 2048 else b""
+            except (ValueError, OSError):
+                self.json_response(400, error="Invalid preview action")
+                return
             if self.path != "/api/key-pool/actions":
                 self.json_response(404, error="Not found")
                 return
@@ -53,7 +63,7 @@ def create_server(port: int = 8765, capacity: int = 3,
                 length = int(self.headers.get("Content-Length", "0"))
                 if not 0 < length <= 1024:
                     raise ValueError
-                data = json.loads(self.rfile.read(length))
+                data = json.loads(raw)
                 if not isinstance(data, dict) or set(data) != {"action"}:
                     raise ValueError
                 action = data["action"]

@@ -1,0 +1,19 @@
+body[data-layout=immersive]{margin:0;padding:0;max-width:none;overflow:hidden;background:#0c253c}
+body[data-layout=immersive]>header{position:fixed;inset:0 0 auto;z-index:10;padding:12px 24px;background:#102d38ed;border-bottom:1px solid #456177}
+body[data-layout=immersive]>header .eyebrow,body[data-layout=immersive]>header>p:not(#connection){display:none}
+body[data-layout=immersive] h1{font-size:20px;margin:0}body[data-layout=immersive] h1 a{font-size:12px;margin-left:16px;color:#a0e6d9}
+body[data-layout=immersive] #connection{font-size:11px;margin:5px 0 0}
+body[data-layout=immersive] main>aside,body[data-layout=immersive] #pipeline-title,body[data-layout=immersive] #key-panel,body[data-layout=immersive] #sensor-panel,body[data-layout=immersive] #gateway-panel,body[data-layout=immersive]>footer,body[data-layout=immersive] [aria-labelledby=events-title]{display:none}
+body[data-layout=immersive] #twin-panel{padding:0;border:0;background:transparent}
+.twin-reading-details [aria-labelledby=controls-title]{margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid #d3e0e4}
+.twin-reading-details #controls-title{margin:0 0 10px;color:#203f4b;font-size:16px}
+.twin-reading-details #controls-title .tag,.twin-reading-details [aria-labelledby=controls-title]>p:first-of-type{display:none}
+.twin-reading-details #controls{border:0;padding:0;display:flex;flex-wrap:wrap;gap:5px;min-width:0}
+.twin-reading-details #controls legend{display:none}.twin-reading-details #controls button{margin:0;padding:9px;font-size:11px;border:1px solid #8da4af;background:#eef4f5;color:#1b4650}
+.twin-reading-details #controls button:not(:disabled){background:#126f64;color:#fff;border-color:#126f64}
+.twin-reading-details #controls button:disabled{opacity:.5}.twin-reading-details #controls label{margin:5px 0;font-size:11px;color:#48636e;flex-basis:100%}
+.twin-reading-details #controls input{width:100%;background:white;color:#203f4b;padding:7px}
+.twin-reading-details #scenario-status,.twin-reading-details #clock-status,.twin-reading-details #action-help{font-size:11px;color:#4c6571;line-height:1.5}
+.twin-reading-details #action-error{font-size:12px;color:#a12b38}
+.twin-reading-details>details{margin-bottom:20px;border-bottom:1px solid #d3e0e4;padding-bottom:15px}
+.twin-reading-details>details>summary{cursor:pointer;color:#126f64;font-size:14px;font-weight:650;padding:5px}

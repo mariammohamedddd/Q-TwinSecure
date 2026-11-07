@@ -23,7 +23,10 @@ ASSETS = {"/": ("index.html", "text/html; charset=utf-8"),
           "/key-panel.js": ("key-panel.js", "text/javascript; charset=utf-8"),
           "/sensor-panel.js": ("sensor-panel.js", "text/javascript; charset=utf-8"),
           "/sensor-panel.css": ("sensor-panel.css", "text/css; charset=utf-8"),
-          "/twin-panel.js": ("twin-panel.js", "text/javascript; charset=utf-8")}
+          "/twin-panel.js": ("twin-panel.js", "text/javascript; charset=utf-8"),
+          "/twin-panel.css": ("twin-panel.css", "text/css; charset=utf-8"),
+          "/twin-live.css": ("twin-live.css", "text/css; charset=utf-8"),
+          "/twin": ("twin-live.html", "text/html; charset=utf-8")}
 ACTIONS = ("reset", "generate_keys", "interrupt_supply", "resume_supply",
            "start_epoch", "end_epoch", "send_reading", "advance_time")
 MAX_STEP_SECONDS = 3600
@@ -39,8 +42,14 @@ class ActionError(ValueError):
 
 class RunnerState:
     """Own one deterministic demonstration and serialize only safe state."""
-    def __init__(self, key_pool=None):
-        self.key_pool = key_pool if key_pool is not None else QKDKeyPool(auto_generate=False)
+    def __init__(self, key_pool=None, *, auto_generate=False,
+                 current_threshold=5, missing_threshold=15):
+        # Validate before starting an optional key-supply worker.
+        TwinMonitor(current_threshold, missing_threshold)
+        self.auto_generate = auto_generate
+        self.current_threshold = current_threshold
+        self.missing_threshold = missing_threshold
+        self.key_pool = key_pool if key_pool is not None else QKDKeyPool(auto_generate=auto_generate)
         self.gateway = GatewayStatus()
         self._device_key = None
         self._twin_key = None
@@ -48,10 +57,15 @@ class RunnerState:
         self._origin = datetime.now(timezone.utc)
         self.events = deque(maxlen=MAX_EVENTS)
         self.sensor = CO2SensorSimulator(values=[650, 700, 680], clock=self.now)
-        self.twin = TwinMonitor(clock=self.now)
+        self.twin = TwinMonitor(current_threshold, missing_threshold, clock=self.now)
         self.readings_generated = 0
         self.readings_delivered = 0
+        self.readings_rejected = 0
         self.scenario = "READY"
+
+    def close(self):
+        self.end_epoch()
+        self.key_pool.close()
 
     def now(self):
         return self._origin + timedelta(seconds=self.elapsed_seconds)
@@ -85,8 +99,12 @@ class RunnerState:
 
     def accept_envelope(self, envelope):
         """Authentication and Twin acceptance must both succeed before counting delivery."""
-        reading = self.verify_reading(envelope)
-        self.twin.update_observation(reading, received_at=self.now())
+        try:
+            reading = self.verify_reading(envelope)
+            self.twin.update_observation(reading, received_at=self.now())
+        except (InvalidTag, ValueError):
+            self.readings_rejected += 1
+            raise
         self.readings_delivered += 1
         return reading
 
@@ -108,7 +126,10 @@ class RunnerState:
                 "sensor": self.sensor.get_status(), "gateway": self.gateway.get_status(),
                 "twin": self.twin.get_status(self.now()),
                 "readings_generated": self.readings_generated,
-                "readings_delivered": self.readings_delivered, "events": list(self.events),
+                "readings_delivered": self.readings_delivered,
+                "readings_rejected": self.readings_rejected,
+                "key_supply_mode": "automatic" if self.auto_generate else "manual",
+                "events": list(self.events),
                 "clock": {"elapsed_seconds": self.elapsed_seconds,
                           "timestamp": self.now().isoformat(), "mode": "manual",
                           "max_step_seconds": MAX_STEP_SECONDS,
@@ -143,7 +164,10 @@ class RunnerState:
                 capacity = self.key_pool.get_status()["capacity"]
                 self.end_epoch()
                 self.key_pool.close()
-                self.__init__(QKDKeyPool(capacity=capacity, auto_generate=False))
+                self.__init__(QKDKeyPool(capacity=capacity, auto_generate=self.auto_generate),
+                              auto_generate=self.auto_generate,
+                              current_threshold=self.current_threshold,
+                              missing_threshold=self.missing_threshold)
                 message = "All demo components reset; pool empty, no epoch or observation."
             elif action == "generate_keys":
                 added = self.key_pool.generate_keys(count)
@@ -185,7 +209,7 @@ class RunnerState:
             raise
         except (InvalidTag, ValueError):
             message = "Reading rejected; Twin observation and delivered count unchanged."
-            self.record(action, "failure", message)
+            self.record(action, "rejected", message)
             raise ActionError(message, 409) from None
         self.record(action, "success", message)
         return self.status()
@@ -255,19 +279,41 @@ class DashboardHandler(BaseHTTPRequestHandler):
         pass
 
 
-def create_server(port=8000):
-    server = HTTPServer(("127.0.0.1", port), DashboardHandler)
-    server.state = RunnerState()
-    return server
+class DashboardServer(HTTPServer):
+    def server_close(self):
+        if hasattr(self, "state"):
+            self.state.close()
+        super().server_close()
 
+
+def create_server(port=8000, *, auto_generate=False, current_threshold=5, missing_threshold=15):
+    state = RunnerState(auto_generate=auto_generate, current_threshold=current_threshold,
+                        missing_threshold=missing_threshold)
+    try:
+        server = DashboardServer(("127.0.0.1", port), DashboardHandler)
+    except OSError:
+        state.close()
+        raise
+    server.state = state
+    return server
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--port", type=int, default=8000)
+    parser.add_argument('--automatic-key-supply', action='store_true',
+                        help='Enable wall-time key generation; default is manual for repeatability.')
+    parser.add_argument('--current-threshold', type=float, default=5)
+    parser.add_argument('--missing-threshold', type=float, default=15)
     args = parser.parse_args()
     if not 1 <= args.port <= 65535:
         parser.error("port must be between 1 and 65535")
-    with create_server(args.port) as server:
+    try:
+        server = create_server(args.port, auto_generate=args.automatic_key_supply,
+                               current_threshold=args.current_threshold,
+                               missing_threshold=args.missing_threshold)
+    except ValueError as error:
+        parser.error(str(error))
+    with server:
         print(f"Q-TwinSecure integrated demo: http://127.0.0.1:{server.server_port}")
         print("Manual clock and key generation. Press Ctrl+C to stop.")
         try:

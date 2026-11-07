@@ -1,4 +1,35 @@
-﻿# Verification results
+# Verification results
+
+## Current Twin integration results (2026-11-07)
+
+Local MARIAM_WAEL branch, existing venv: Python 3.13.3, cryptography 50.0.2.
+These results supersede older null-component checkpoints below.
+
+- 73 Python tests passed, including real HTTP and integrated Twin scenarios.
+- 4 Twin/shared-app + 1 gateway JavaScript tests passed; Twin rendering uses real runner
+  snapshots and preserves the accepted display after tampering.
+- Existing sensor JavaScript tests passed four check groups.
+- Evidence: evidence/twin-python-tests.txt, evidence/twin-javascript-tests.txt,
+  evidence/twin-scenarios.json. Tests disable automatic supply for determinism.
+
+| Automated scenario | Keys available | Connection | Delivered | Freshness | Result |
+| --- | ---: | --- | ---: | --- | --- |
+| Normal | 0 | CONNECTED | 1 | CURRENT | Pass |
+| Interrupted, old epoch active | 0 | CONNECTED | 2 | CURRENT | Pass |
+| New epoch without key | 0 | DISCONNECTED | 2 | CURRENT initially | 409 as expected |
+| Advance experiment clock to 6s | 0 | DISCONNECTED | 2 | DELAYED | Pass |
+| Advance to 16s | 0 | DISCONNECTED | 2 | MISSING | Pass |
+| Recovery | 0 | CONNECTED | 3 | CURRENT | Pass |
+| Reset | 0 | DISCONNECTED | 0 | MISSING, no observation | Pass |
+
+Additional checks reject tampered and authenticated-but-invalid observations
+without changing Twin status or delivered count. Browser visual/interactions
+review is NOT VERIFIED: browser host unavailable and native Chrome minimized.
+Shared-file review and presenter acceptance remain pending. No screenshots or
+team phase acceptance are claimed. Integration committed for the requested main merge.
+
+## Historical Nancy foundation results
+
 
 2026-11-07, branch Nancy, Python 3.14.3.
 
@@ -57,3 +88,7 @@ All older unavailable/not-run entries above are historical. The following result
 Tampering and invalid Twin readings leave observation/delivery count unchanged; repeated protected readings use one pool allocation; buffered keys survive interruption; pool capacity is respected. Status checks exclude key bytes and protected envelope fields.
 
 Browser visual acceptance, console/network inspection in an actual browser, screenshots and team presenter rehearsal remain pending. HTTP and isolated panel tests do not establish those checks. No browser automation tool was available. The presenter checklist uses two initial readings (one more than this automated scenario) and consequently expects final delivered=4.
+
+## Latest combined merge — 2026-11-07
+
+After merging both Mariam contributions: `py -B -m unittest discover -s tests -v` passed 76 tests. With PYTHON=py, Node gateway/sensor/sensor-shared/Twin/Twin-app tests passed 7 test entries. app.js syntax passed. Checks initially exposed Python-launcher portability and Windows unread-body rejection resets; both were fixed and the combined rerun passed. Shared sensor/Twin DOM tests use real runner snapshots; assembled-browser visual review remains pending. Owner evidence files are retained as historical results, not relabelled as this run.

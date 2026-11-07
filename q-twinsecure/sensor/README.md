@@ -1,4 +1,4 @@
-﻿# CO2 sensor simulator
+# CO2 sensor simulator
 
 From the `q-twinsecure` directory (Python 3.10+, standard library only):
 
@@ -21,7 +21,7 @@ Calling status does not generate data. Batch reads are immediate; scheduling
 belongs to the runner. This simulator performs no transmission, protection,
 key allocation or freshness calculation, and models no physical sensor.
 
-The shared experiment runner/API do not yet exist. The sensor panel now has
+The shared experiment runner now exposes sensor status. The sensor panel also has
 its own standalone preview, using real data from this Python simulator.
 
 Verified locally on 2026-11-05 with Python 3.14: 10 tests passed and the demo
@@ -89,6 +89,27 @@ node tests/test_sensor_panel.mjs
 sample rate limiting and unknown-route rejection). Four JavaScript check groups
 passed for validation, rendering, chart bounds, reset, disconnection, recovery
 and polling cleanup using a minimal DOM adapter. These are not browser rendering
-tests. Browser appearance, responsive layout and integration with Nancy's runner
-still require manual verification. To check recovery, stop the preview, wait for
+tests. Browser appearance and responsive layout
+still require manual verification. Shared runner wiring is tested as recorded below. To check recovery, stop the preview, wait for
 Disconnected, then restart it and confirm readings resume.
+
+## Shared dashboard (2026-11-07)
+
+From q-twinsecure/, run `py -B main.py` and open http://127.0.0.1:8000.
+Generate a key, start an epoch and click **Send reading** to generate and securely
+deliver a sensor observation. **Advance time** changes observation age only;
+status polling generates no data. Sensor timestamps use the shared manual UTC
+clock. Reset clears the sensor, counts and chart. One shared poller updates all
+panels and their disconnected/recovery states; no second sensor poller runs.
+
+The independent preview remains available. Shared-app tests render actual
+RunnerState snapshots and exercise reset, disconnection and recovery:
+
+```powershell
+$env:PYTHON = 'py'
+node --test tests/test_sensor_panel.mjs tests/test_sensor_shared.mjs
+```
+
+These use a DOM adapter; browser visual review remains pending. Nancy adapted
+the new shared test to the integrated Send reading action, preserving the
+existing protected-delivery path rather than generating readings on clock steps.

@@ -15,6 +15,7 @@ from . import TwinMonitor
 PAGE = b'''<!doctype html><html lang="en"><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Q-TwinSecure | Twin Monitor</title>
+<link rel="stylesheet" href="/twin-panel.css">
 <style>
 *{box-sizing:border-box}body{margin:0;background:#f4f7f9;color:#162b36;font:15px system-ui,sans-serif}
 .topbar{background:#102d38;color:white;padding:20px max(24px,calc((100vw - 1540px)/2));display:flex;align-items:center;justify-content:space-between;gap:16px}.brand{font-size:17px;font-weight:750;letter-spacing:-.5px}.brand span{color:#72d2ba}.mode{font-size:11px;border:1px solid #48636d;border-radius:30px;padding:6px 12px;color:#d5e5e8}
@@ -84,6 +85,9 @@ def make_handler(monitor: TwinMonitor):
         def do_GET(self):
             if self.path == '/':
                 self.respond(200, PAGE, 'text/html; charset=utf-8')
+            elif self.path == '/twin-panel.css':
+                css = Path(__file__).resolve().parents[1] / 'web' / 'twin-panel.css'
+                self.respond(200, css.read_bytes(), 'text/css; charset=utf-8')
             elif self.path == '/twin-panel.js':
                 script = Path(__file__).resolve().parents[1] / 'web' / 'twin-panel.js'
                 self.respond(200, script.read_bytes(), 'text/javascript; charset=utf-8')

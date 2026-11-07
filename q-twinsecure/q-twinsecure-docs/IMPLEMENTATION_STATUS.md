@@ -26,7 +26,7 @@ This file distinguishes **reported setup**, **drafted code**, **verified impleme
 | TLS 1.3 external PSK | Not started | Optional for this small PoC; do not claim it is implemented. |
 | Digital Twin freshness logic | In progress | Real component wired into shared runner; automated integration passed. Shared browser/presentation review pending. |
 | Main end-to-end flow | Implemented and tested | Real HTTP normal/interruption/expiry/recovery/reset flow passed on Nancy; browser review pending. |
-| Automated tests | Implemented and tested | Combined suite: 69 Python tests; 4 JavaScript test entries passed. |
+| Automated tests | Implemented and tested | Combined suite: 76 Python tests; 7 JavaScript test entries passed. |
 | Normal/interruption/recovery experiment | In progress | Automated API scenario passed; presenter rehearsal and screenshots pending. |
 | ML anomaly detection | Out of current PoC scope | Broader research direction only. |
 | LLM explanations | Out of current PoC scope | Broader research direction only. |
@@ -53,7 +53,7 @@ Use these status labels:
 
 Nancy's shared runner now connects the actual key pool, sensor, gateway and Twin. All four owner panels are loaded by the shared dashboard and receive real API snapshots. Keys remain private; only authenticated readings accepted by the Twin increment delivery counts. Reset recreates all components. The runner uses supported manual key generation and one shared manual experiment clock. See [current run/review guide](../experiments/scenario_checklist.md).
 
-Merged Kareem's latest main contribution (PR #5, a309f46 via d41926f) while preserving Nancy's integration. Combined automated verification passed: 69 Python tests and 4 JavaScript test entries. No assembled-dashboard browser automation or screenshots were captured. Visual review, team Phase 3 acceptance, presentation rehearsal and final evidence remain pending. Older entries below are historical checkpoints.
+Merged Kareem's latest main contribution (PR #5, a309f46 via d41926f) while preserving Nancy's integration. Latest combined automated verification passed: 76 Python tests and 7 JavaScript test entries. No assembled-dashboard browser automation or screenshots were captured. Visual review, team Phase 3 acceptance, presentation rehearsal and final evidence remain pending. Older entries below are historical checkpoints.
 
 ## 4. Update log
 
@@ -98,3 +98,11 @@ Post-merge verification: `py -B -m unittest discover -s tests -v` passed 50 test
 Actual checks at Nancy's Phase 2 checkpoint: `py -B -m unittest discover -s tests -v` passed 16 tests (10 dashboard/state and 6 gateway); `node --check web/app.js` passed. Browser review of Phase 2 interactions remains pending. Those checks preceded the merged component contributions and are not a result for the current combined checkout. The checkout now includes the independent sensor, key-pool, gateway and Twin implementations and their owner panels, with component evidence recorded above. Shared-runner domain integration remains pending. Team-wide Phase 2 completion depends on owners' component/panel work and review; the shared Phase 3 scenario is not implemented. See updated interface contract and experiment checklist.
 
 - 2026-11-07: Integrated the real components in Nancy's runner and shared dashboard; added API scenario and rejection/accounting tests. `py -B -m unittest discover -s tests -v` passed 69 tests after merging Kareem PR #5. With PYTHON=py, gateway/sensor/Twin Node test files passed 4 test entries. app.js and key-panel.js syntax checks passed. Browser review and screenshots remain pending. Initial sandbox Python execution was denied; the approved rerun outside the sandbox passed.
+
+## Sensor and Twin contributions merged into Nancy — 2026-11-07
+
+Merged main 508ae20, including Mariam Mohamed's shared sensor test (7df48be) and Mariam Wael's integration/view work (b6dab8c, f779117, 508ae20). Preserved Nancy's integrated runner, real key panel, default manual key mode and Send reading semantics. Adapted incoming tests to the active runner rather than introducing a second shared state owner. The standalone TwinPipeline adapter remains available independently.
+
+Added real rejection counts, configurable thresholds retained across reset, optional automatic supply, server cleanup and /twin factory view with external Twin CSS. Shared-app tests now verify actual runner snapshots reaching the sensor and Twin panels, disconnection/recovery/reset and tampering. Fixed Python-launcher portability and bounded rejected-request draining in the standalone key preview after Windows reset failures.
+
+Actual verification: 76 Python tests passed; the five Node test files passed 7 test entries; app.js syntax passed. Saved owner evidence is historical component evidence; this entry records the current combined run. No assembled browser visual review or screenshots were performed.

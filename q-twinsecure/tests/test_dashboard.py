@@ -40,7 +40,8 @@ class DashboardTests(unittest.TestCase):
         for path, expected in [("/", "text/html"), ("/app.js", "text/javascript"),
                                ("/style.css", "text/css"), ("/key-panel.js", "text/javascript"),
                                ("/sensor-panel.js", "text/javascript"), ("/twin-panel.js", "text/javascript"),
-                               ("/sensor-panel.css", "text/css"), ("/gateway-panel.js", "text/javascript")]:
+                               ("/sensor-panel.css", "text/css"), ("/twin", "text/html"),
+                               ("/twin-panel.css", "text/css"), ("/twin-live.css", "text/css"), ("/gateway-panel.js", "text/javascript")]:
             with self.subTest(path=path):
                 code, kind, body = self.request(path)
                 self.assertEqual(code, 200)

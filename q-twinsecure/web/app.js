@@ -1,7 +1,17 @@
 import { renderKeyPanel } from './key-panel.js';
 import './sensor-panel.js';
 import './twin-panel.js';
-const twinPanel = globalThis.mountTwinPanel(document.querySelector('#twin-panel'));
+const twinPanel = globalThis.mountTwinPanel(document.querySelector('#twin-panel'), {
+  fullScreen: document.body.dataset.layout === 'immersive'
+});
+if (document.body.dataset.layout === 'immersive') {
+  const detailPanel = document.querySelector('.twin-reading-details');
+  const disclosure = document.createElement('details');
+  const summary = document.createElement('summary');
+  summary.textContent = 'Experiment controls';
+  disclosure.append(summary, document.querySelector('[aria-labelledby="controls-title"]'));
+  detailPanel.prepend(disclosure);
+}
 const sensorPanel = document.querySelector('co2-sensor-panel');
 import { renderGatewayPanel } from "./gateway-panel.js";
 const connection = document.querySelector('#connection');
@@ -30,13 +40,13 @@ function render(status) {
   renderKeyPanel(document.querySelector('#key-panel'), status.key_pool);
   sensorPanel.update(status.sensor);
   twinPanel.update(status.twin);
-  document.querySelector('#scenario-status').textContent = `Scenario: ${status.scenario} · Generated: ${status.readings_generated} · Delivered: ${status.readings_delivered}`;
+  document.querySelector('#scenario-status').textContent = `Scenario: ${status.scenario} · Generated: ${status.readings_generated} · Delivered: ${status.readings_delivered} · Rejected: ${status.readings_rejected}`;
   latestStatus = status;
   online = true;
   connection.textContent = 'Local runner connected · Integrated components';
   connection.dataset.state = 'connected';
   document.querySelector('#clock-status').textContent = `Experiment clock: ${status.clock.elapsed_seconds} seconds (manual; paused between actions)`;
-  document.querySelector('#action-help').textContent = 'Keys and clock are presenter-controlled. Generate keys, start an epoch, then send readings. Clock limit: 86400 seconds.';
+  document.querySelector('#action-help').textContent = `Observation time is manual; keys are ${status.key_supply_mode}. Generate or wait for keys, start an epoch, then send readings. Clock limit: 86400 seconds.`;
   const events = document.querySelector('#events');
   events.replaceChildren();
   document.querySelector('#event-empty').hidden = status.events.length > 0;

@@ -151,3 +151,10 @@ Component integration and scenario controls remain pending. See [Nancy's checkli
 - [x] Document deterministic configuration, current API and presenter guide.
 - [ ] Review the assembled dashboard in a browser; confirm disconnect/reconnect, layout and duplicate-click handling.
 - [ ] Team Phase 3 review, final presentation rehearsal, screenshots and evidence.
+
+## Latest sensor/Twin merge review
+
+- [x] Merge both owner contributions while preserving integrated delivery semantics.
+- [x] Adapt shared-app and rejection tests to Nancy's runner; 76 Python tests and 7 JavaScript entries passed.
+- [x] Serve factory view and external Twin CSS; expose rejection counters and configurable thresholds.
+- [ ] Review / and /twin in a browser, including layout, controls and disconnected states.

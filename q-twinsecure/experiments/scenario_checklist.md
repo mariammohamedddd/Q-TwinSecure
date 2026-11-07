@@ -53,3 +53,9 @@ node --check web/app.js
 - [ ] Team reviews Phase 3 before presentation rehearsal and final evidence work.
 
 HTTP integration and isolated panel tests do not establish visual/browser acceptance. No browser automation tool was available in this session. This is a local in-memory software model using classical randomness and direct AES-GCM; no physical QKD, TLS, production replay protection or guaranteed secure memory erasure is claimed.
+
+## Latest merged controls and factory view
+
+Open http://127.0.0.1:8000/twin for Mariam Wael's full-screen factory view using the same backend. Manual keys and manual observation time remain default. Optional automatic key supply: `py -B main.py --automatic-key-supply`. Optional thresholds: `--current-threshold 5 --missing-threshold 15`; reset preserves them. The dashboard also shows rejected-reading counts.
+
+Current full checks add `tests/test_sensor_shared.mjs` and `tests/test_twin_app.cjs` to the Node command above. Expected current result: 76 Python tests and 7 Node test entries passed. Browser review must include both / and /twin.
