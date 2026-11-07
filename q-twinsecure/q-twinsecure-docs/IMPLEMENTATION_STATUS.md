@@ -1,6 +1,6 @@
 # Implementation Status
 
-Last updated: 2026-11-05
+Last updated: 2026-11-07
 
 This file distinguishes **reported setup**, **drafted code**, **verified implementation**, and **not started**. Update it whenever the repository changes.
 
@@ -51,7 +51,7 @@ Use these status labels:
 
 ## Planned dashboard status
 
-The shared committee dashboard, API and integrated scenario runner remain planned in [plan.md](plan.md). The sensor owner panel now has an independent Python-backed preview; its shared-runner integration and browser visual verification remain pending. Existing component status and the local gateway evidence remain separate.
+Nancy's Phase 1 local runner, dashboard shell, explicit empty states and read-only status endpoint are included, together with the Phase 2 reset/advance-time controls described below. Phase 1 browser operation was reported working; Phase 2 browser interaction review and team confirmation remain pending. Mariam Mohamed's independent sensor backend and reusable owner panel are also included, with a Python-backed preview; shared-runner integration and sensor browser visual verification remain pending. Component integration and end-to-end scenarios remain not started. See [run and review checklist](../experiments/scenario_checklist.md) and [results](../experiments/results.md).
 
 ## 4. Update log
 
@@ -59,6 +59,15 @@ The shared committee dashboard, API and integrated scenario runner remain planne
 - 2026-11-05: Python virtual environment and `cryptography` installation reported successful.
 - 2026-11-05: Initial PoC folder structure and key-pool design discussed. Actual files and execution still need confirmation.
 
-- 2026-11-05: Mariam Mohamed's independent sensor backend was saved on branch `Mariam-Mohamed`. `py -3.14 -B -m unittest discover -s tests -p test_sensor.py -v` passed 10 tests; `py -3.14 -B -m sensor.demo` printed five JSON readings with stable ID, numeric ppm values and aware UTC timestamps. Run both from `q-twinsecure/`. Includes configurable range, seeded random values, cycling fixed sequence, injected clock and defensive latest-reading status. The component remains In progress because shared-runner integration is pending. The sensor panel was subsequently added as recorded below; the shared dashboard foundation/API remain pending. No other owner's module was changed.
+- 2026-11-05: Mariam Mohamed's independent sensor backend was saved on branch `Mariam-Mohamed`. `py -3.14 -B -m unittest discover -s tests -p test_sensor.py -v` passed 10 tests; `py -3.14 -B -m sensor.demo` printed five JSON readings with stable ID, numeric ppm values and aware UTC timestamps. Run both from `q-twinsecure/`. Includes configurable range, seeded random values, cycling fixed sequence, injected clock and defensive latest-reading status. The component remains In progress because shared-runner integration is pending. The sensor panel was subsequently added as recorded below; the shared dashboard foundation/API were pending at that time and have since been added by Nancy as recorded below. No other owner's module was changed.
 
 - 2026-11-05: Added Mariam Mohamed's reusable sensor panel in web/sensor-panel.js and scoped CSS, with sensor illustrations, latest reading, UTC timestamp and bounded observation chart. Independent preview: py -3.14 -B -m sensor.dashboard, http://127.0.0.1:8765. No changes to Nancy's main.py or shared dashboard shell. Validation: 13 Python sensor/HTTP tests passed; node tests/test_sensor_panel.mjs passed four check groups using a minimal DOM adapter. Browser visual checks and integration with Nancy's runner remain pending; no browser automation tool is available in this session.
+- 2026-11-07: Nancy Phase 1: Python 3.14.3; dashboard HTTP tests passed 5/5; existing gateway tests passed 6/6. Browser review and team review pending; no integrated scenario evidence claimed.
+
+- 2026-11-07: Final validation: `py -B -m unittest discover -s tests -v` passed all 11 tests; `node --check web/app.js` passed. Phase 1 browser operation was subsequently confirmed by the user.
+
+## Phase 2 update — 2026-11-07
+
+User reported Phase 1 working and authorized Phase 2. Nancy's shared control foundation is saved and tested locally, included in Nancy's dashboard contribution. It supports validated reset/advance-time requests, bounded manual clock, action availability metadata, timestamped safe events, and frontend control/error/disconnected handling. All component fields remain unavailable; no connection or delivery is claimed.
+
+Actual checks: `py -B -m unittest discover -s tests -v` passed 16 tests (10 dashboard/state and 6 gateway); `node --check web/app.js` passed. Browser review of Phase 2 interactions remains pending. Nancy's validation was recorded before the sensor contribution was merged. The merged checkout includes Mariam Mohamed's independent sensor implementation and owner panel; they are not yet connected to the shared runner. The key-pool implementation remains empty and the Twin implementation remains pending. Team-wide Phase 2 completion depends on owners' component/panel work and review; Phase 3 has not begun. See updated interface contract and experiment checklist.

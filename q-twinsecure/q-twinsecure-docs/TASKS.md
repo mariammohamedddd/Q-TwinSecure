@@ -94,3 +94,25 @@ Local verification on 2026-11-05: 10 sensor tests passed and the independent dem
 - [ ] ML anomaly detection.
 - [ ] LLM incident explanations.
 - [ ] Cloud deployment and production hardening.
+
+## Nancy — dashboard Phase 1 (2026-11-07)
+
+- [x] Create branch `Nancy` and add loopback-only standard-library runner.
+- [x] Add page shell with component ownership boundaries, explicit empty states and disabled controls.
+- [x] Add foundation status API and HTTP tests.
+- [x] Prepare run instructions, scenario checklist, results table and evidence folder.
+- [ ] Review loading/disconnected states and responsive layout in a browser.
+- [ ] Confirm ownership and contract with team; review Phase 1 before Phase 2.
+
+Component integration and scenario controls remain pending. See [Nancy's checklist](../experiments/scenario_checklist.md).
+
+## Nancy — Phase 2 control foundation (2026-11-07)
+
+- [x] Record user's Phase 1 confirmation and proceed to Phase 2.
+- [x] Provide validated action API, availability metadata and bounded safe event history.
+- [x] Implement reset and bounded manual clock independently of unfinished components.
+- [x] Add controls, busy/disconnected states, action errors and event display.
+- [x] Verify 16 tests and JavaScript syntax; document API and owner handoff.
+- [ ] Review Phase 2 controls in a browser.
+- [ ] Owners complete independent components, safe-status interfaces and real-data panels.
+- [ ] Pass team Phase 2 review before Phase 3 integration.

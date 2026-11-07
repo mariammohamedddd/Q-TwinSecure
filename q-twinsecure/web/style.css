@@ -1,0 +1,29 @@
+﻿:root { color-scheme: dark; font-family: system-ui, sans-serif; background: #0b1220; color: #e4edf8; }
+* { box-sizing: border-box; }
+body { max-width: 1250px; margin: auto; padding: 36px 24px; }
+header { border-bottom: 1px solid #33425a; padding-bottom: 20px; }
+h1 { font-size: clamp(2rem, 5vw, 3.6rem); letter-spacing: -.04em; margin: 12px 0; }
+h2 { font-size: 1.3rem; margin-top: 30px; } h3 { margin-top: 12px; }
+p { line-height: 1.65; color: #bac9dc; }
+.eyebrow { font-size: .73rem; letter-spacing: .12em; color: #72d8cf; }
+#connection { color: #e8c877; } #connection[data-state=connected] { color: #72d8cf; }
+#connection[data-state=disconnected] { color: #ffb4a9; }
+aside { margin: 24px 0; padding: 18px 22px; border-left: 3px solid #72d8cf; background: #142234; }
+aside p { margin-bottom: 0; }
+.grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+article { padding: 24px; background: #121e30; border: 1px solid #33425a; border-radius: 10px; }
+.empty { font-size: 1.2rem; color: #e8c877; }
+.tag { font-size: .7rem; color: #72d8cf; margin-left: 12px; }
+fieldset { border: 1px solid #33425a; border-radius: 8px; padding: 16px; }
+legend { color: #bac9dc; padding: 0 8px; }
+button { padding: 11px 15px; margin: 5px; border-radius: 6px; border: 1px solid #52627b; background: #202e43; color: #b6c2d3; }
+button:disabled { cursor: not-allowed; }
+footer { border-top: 1px solid #33425a; margin-top: 32px; padding-top: 20px; color: #bac9dc; font-size: .8rem; }
+@media (max-width: 650px) { .grid { grid-template-columns: 1fr; } body { padding: 24px 16px; } }
+label { display: inline-flex; flex-direction: column; gap: 6px; margin: 10px; font-size: .85rem; color: #bac9dc; }
+input { width: 145px; padding: 10px; border: 1px solid #52627b; border-radius: 6px; background: #0b1220; color: #e4edf8; }
+button:not(:disabled) { color: #0b1220; background: #72d8cf; cursor: pointer; }
+button:focus-visible, input:focus-visible { outline: 3px solid #e8c877; outline-offset: 3px; }
+#action-error { color: #ffb4a9; }
+#events { padding-left: 24px; max-height: 320px; overflow: auto; }
+#events li { padding: 10px 0; border-bottom: 1px solid #33425a; line-height: 1.6; overflow-wrap: anywhere; }
