@@ -26,3 +26,7 @@ Phase 1 is a shell, not an end-to-end experiment. No physical QKD or TLS impleme
 - State checks exercised 86400-second clock limit, reset recovery and 100-event retention.
 - Phase 2 visual/browser interaction review: pending; see scenario_checklist.md.
 - No integrated sensor/key-pool/Twin results, owner panel acceptance or end-to-end scenarios claimed. Phase 2 team gate remains pending owner work.
+
+## Gateway runner coordination — 2026-11-07
+
+`py -B -m unittest discover -s tests -v`: PASS, 39 tests. JavaScript syntax checks for app.js and gateway-panel.js passed. With `$env:PYTHON = 'py'`, `node --test tests/test_gateway_panel.mjs tests/test_sensor_panel.mjs`: PASS, both files. Runner tests exercise Kareem's actual crypto/status code with a test-only matching key provider, including HTTP lifecycle/status/module loading. Default runner still has no real key provider. Browser review and end-to-end Twin evidence remain pending.

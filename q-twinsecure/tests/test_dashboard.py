@@ -1,4 +1,4 @@
-﻿"""Real HTTP checks for Nancy's Phase 2 control API."""
+"""Real HTTP checks for Nancy's Phase 2 control API."""
 import json
 import threading
 import unittest
@@ -38,7 +38,7 @@ class DashboardTests(unittest.TestCase):
 
     def test_page_and_assets(self):
         for path, expected in [("/", "text/html"), ("/app.js", "text/javascript"),
-                               ("/style.css", "text/css")]:
+                               ("/style.css", "text/css"), ("/gateway-panel.js", "text/javascript")]:
             with self.subTest(path=path):
                 code, kind, body = self.request(path)
                 self.assertEqual(code, 200)
@@ -51,7 +51,8 @@ class DashboardTests(unittest.TestCase):
         status = json.loads(body)
         self.assertEqual(status['phase'], 2)
         self.assertFalse(status["integration_ready"])
-        for field in ("key_pool", "sensor", "gateway", "twin",
+        self.assertEqual(status["gateway"]["connection_state"], "DISCONNECTED")
+        for field in ("key_pool", "sensor", "twin",
                       "readings_generated", "readings_delivered"):
             self.assertIsNone(status[field])
         self.assertEqual(status["events"], [])

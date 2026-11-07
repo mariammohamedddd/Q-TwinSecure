@@ -1,4 +1,4 @@
-﻿"""Nancy's Phase 2 local control API; domain integration remains pending."""
+"""Nancy's Phase 2 local control API; domain integration remains pending."""
 import argparse
 from collections import deque
 from datetime import datetime, timezone
@@ -6,11 +6,16 @@ import json
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from pathlib import Path
 from urllib.parse import urlsplit
+from uuid import uuid4
+
+from gateway.crypto import encrypt_reading
+from gateway.status import GatewayStatus
 
 WEB = Path(__file__).resolve().parent / "web"
 ASSETS = {"/": ("index.html", "text/html; charset=utf-8"),
           "/app.js": ("app.js", "text/javascript; charset=utf-8"),
-          "/style.css": ("style.css", "text/css; charset=utf-8")}
+          "/style.css": ("style.css", "text/css; charset=utf-8"),
+          "/gateway-panel.js": ("gateway-panel.js", "text/javascript; charset=utf-8")}
 ACTIONS = ("reset", "generate_keys", "interrupt_supply", "resume_supply",
            "start_epoch", "end_epoch", "send_reading", "advance_time")
 MAX_STEP_SECONDS = 3600
@@ -25,10 +30,53 @@ class ActionError(ValueError):
 
 
 class RunnerState:
-    """Single-server in-memory state. Never contains component secrets."""
-    def __init__(self):
+    """Own private epoch keys; serialize only explicit safe status fields."""
+    def __init__(self, key_pool=None):
+        self.key_pool = key_pool
+        self.gateway = GatewayStatus()
+        self._device_key = None
+        self._twin_key = None
         self.elapsed_seconds = 0
         self.events = deque(maxlen=MAX_EVENTS)
+
+    def start_epoch(self):
+        """Consume one matching pair, never one key per reading."""
+        if self.gateway.get_status()["connection_state"] == "CONNECTED":
+            raise ActionError("End the active epoch before starting another.", 409)
+        if self.key_pool is None:
+            raise ActionError("Key pool is not connected.", 409)
+        record = self.key_pool.consume_key()
+        if record is None:
+            raise ActionError("No key available for a new epoch.", 409)
+        # Proposed internal adapter format; never accepted from HTTP clients.
+        if (not isinstance(record, dict) or
+                not isinstance(record.get("key_id"), str) or not record["key_id"].strip() or
+                not isinstance(record.get("device_key"), bytes) or
+                len(record["device_key"]) != 32 or
+                not isinstance(record.get("twin_key"), bytes) or
+                record["device_key"] != record["twin_key"]):
+            raise ActionError("Key provider returned an invalid matching key pair.", 409)
+        self.gateway.start_epoch(str(uuid4()))
+        self._device_key = record["device_key"]
+        self._twin_key = record["twin_key"]
+
+    def end_epoch(self):
+        """Release runner references; Python does not guarantee memory erasure."""
+        self.gateway.end_epoch()
+        self._device_key = None
+        self._twin_key = None
+
+    def protect_reading(self, reading):
+        """Internal device-side handoff; do not consume another pool key."""
+        if self._device_key is None:
+            raise ActionError("No active connection epoch.", 409)
+        return encrypt_reading(reading, self._device_key)
+
+    def verify_reading(self, envelope):
+        """Return only authenticated readings; caller owns Twin acceptance."""
+        if self._twin_key is None:
+            raise ActionError("No active connection epoch.", 409)
+        return self.gateway.verify_reading(envelope, self._twin_key)
 
     def record(self, action, outcome, message):
         self.events.append({"timestamp": datetime.now(timezone.utc).isoformat(),
@@ -40,9 +88,16 @@ class RunnerState:
                      "reason": None if action in ("reset", "advance_time") else
                      "Component integration pending; action unavailable in Phase 2."}
                      for action in ACTIONS}
+        connected = self.gateway.get_status()["connection_state"] == "CONNECTED"
+        available["start_epoch"] = {
+            "enabled": self.key_pool is not None and not connected,
+            "reason": "End the active epoch first." if connected else
+                      "Key pool is not connected." if self.key_pool is None else None}
+        available["end_epoch"] = {
+            "enabled": connected, "reason": None if connected else "No active connection epoch."}
         return {"api_version": 1, "phase": 2, "scenario": "NOT_STARTED",
                 "integration_ready": False, "key_pool": None, "sensor": None,
-                "gateway": None, "twin": None, "readings_generated": None,
+                "gateway": self.gateway.get_status(), "twin": None, "readings_generated": None,
                 "readings_delivered": None, "events": list(self.events),
                 "clock": {"elapsed_seconds": self.elapsed_seconds,
                           "max_step_seconds": MAX_STEP_SECONDS,
@@ -72,11 +127,26 @@ class RunnerState:
             count = payload["count"]
             if type(count) is not int or not 1 <= count <= 100:
                 raise ActionError("count must be an integer from 1 to 100.")
+        if action in ("start_epoch", "end_epoch"):
+            try:
+                if action == "start_epoch":
+                    self.start_epoch()
+                else:
+                    if self._device_key is None:
+                        raise ActionError("No active connection epoch.", 409)
+                    self.end_epoch()
+            except ActionError as error:
+                self.record(action, "unavailable", str(error))
+                raise
+            self.record(action, "success", "Connection epoch started." if action == "start_epoch"
+                        else "Connection epoch ended.")
+            return self.status()
         if action not in ("reset", "advance_time"):
             message = "Component integration pending; action unavailable in Phase 2."
             self.record(action, "unavailable", message)
             raise ActionError(message, 409)
         if action == "reset":
+            self.end_epoch()
             self.elapsed_seconds = 0
             self.events.clear()
             self.record(action, "success", "Local runner state reset; components remain unavailable.")
@@ -112,26 +182,28 @@ class DashboardHandler(BaseHTTPRequestHandler):
 
     def do_POST(self):
         self.close_connection = True
-        if urlsplit(self.path).path != "/api/actions":
-            self.json_response(404, {"error": "Not found"})
-            return
-        expected_origin = f"http://127.0.0.1:{self.server.server_port}"
-        origin = self.headers.get("Origin")
-        if origin is not None and origin != expected_origin:
-            self.json_response(403, {"error": "Use the local dashboard origin."})
-            return
-        if self.headers.get_content_type() != "application/json":
-            self.json_response(415, {"error": "Content-Type must be application/json."})
-            return
-        if self.headers.get("Transfer-Encoding") is not None:
-            self.json_response(400, {"error": "Transfer encoding is unsupported."})
-            return
+        # Read small requests before rejecting them: closing with unread bytes can
+        # reset the socket on Windows and hide the JSON error from the client.
+        self.connection.settimeout(3)
         try:
-            length = int(self.headers.get("Content-Length", "0"))
+            try:
+                length = int(self.headers.get("Content-Length", "0"))
+            except ValueError:
+                raise ActionError("Invalid Content-Length.") from None
+            raw = self.rfile.read(length) if 0 < length <= 8192 else b""
+            if urlsplit(self.path).path != "/api/actions":
+                self.json_response(404, {"error": "Not found"})
+                return
+            expected_origin = f"http://127.0.0.1:{self.server.server_port}"
+            origin = self.headers.get("Origin")
+            if origin is not None and origin != expected_origin:
+                raise ActionError("Use the local dashboard origin.", 403)
+            if self.headers.get_content_type() != "application/json":
+                raise ActionError("Content-Type must be application/json.", 415)
+            if self.headers.get("Transfer-Encoding") is not None:
+                raise ActionError("Transfer encoding is unsupported.")
             if not 1 <= length <= 4096:
                 raise ActionError("Request body must be between 1 and 4096 bytes.", 413)
-            self.connection.settimeout(3)
-            raw = self.rfile.read(length)
             if len(raw) != length:
                 raise ActionError("Incomplete request body.")
             try:

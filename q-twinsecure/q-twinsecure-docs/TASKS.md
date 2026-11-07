@@ -116,3 +116,13 @@ Component integration and scenario controls remain pending. See [Nancy's checkli
 - [ ] Review Phase 2 controls in a browser.
 - [ ] Owners complete independent components, safe-status interfaces and real-data panels.
 - [ ] Pass team Phase 2 review before Phase 3 integration.
+
+## Nancy / Kareem gateway coordination (2026-11-07)
+
+- [x] Reuse Kareem's existing gateway status adapter and panel without changing owner internals.
+- [x] Specify runner ownership of start/end/reset and internal matching-key handoff.
+- [x] Expose real safe gateway status at /api/status and load/render Kareem's module.
+- [x] Verify lifecycle, no-key failure, matching pair, repeated messages, interruption, rejection, closure, recovery and API/panel routes with a test-only provider.
+- [ ] Confirm proposed record adapter with Marwan and wire his real pool.
+- [ ] Integrate sensor delivery and authenticated Twin acceptance; complete Phase 3 review.
+- [ ] Review gateway panel visually in the shared dashboard.

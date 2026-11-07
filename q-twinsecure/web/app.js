@@ -1,4 +1,5 @@
-﻿const connection = document.querySelector('#connection');
+import { renderGatewayPanel } from "./gateway-panel.js";
+const connection = document.querySelector('#connection');
 const controls = document.querySelector('#controls');
 const actionError = document.querySelector('#action-error');
 const buttons = [...document.querySelectorAll('[data-action]')];
@@ -20,6 +21,7 @@ function render(status) {
   if (status.api_version !== 1 || status.phase !== 2 || !status.actions || !status.clock || !Array.isArray(status.events)) {
     throw new Error('Unsupported runner contract');
   }
+  renderGatewayPanel(document.querySelector("#gateway-panel"), status.gateway);
   latestStatus = status;
   online = true;
   connection.textContent = 'Local runner connected · Component integration pending';
@@ -51,6 +53,7 @@ async function request(path, options = {}) {
 
 function disconnected() {
   online = false;
+  renderGatewayPanel(document.querySelector("#gateway-panel"), null);
   connection.textContent = 'Disconnected · Local runner unavailable. Check the terminal; retrying automatically. Displayed events may be stale.';
   connection.dataset.state = 'disconnected';
   setControls();
