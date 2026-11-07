@@ -53,8 +53,12 @@ Use these status labels:
 
 Nancy's Phase 1 local runner, dashboard shell, explicit empty states and read-only status endpoint are included, together with the Phase 2 reset/advance-time controls described below. Phase 1 browser operation was reported working; Phase 2 browser interaction review and team confirmation remain pending. Mariam Mohamed's independent sensor backend and reusable owner panel are also included, with a Python-backed preview; shared-runner integration and sensor browser visual verification remain pending. Component integration and end-to-end scenarios remain not started. See [run and review checklist](../experiments/scenario_checklist.md) and [results](../experiments/results.md).
 
+Kareem's gateway status adapter and panel are implemented independently; they are not yet connected to the shared dashboard or Twin. Existing component status and local gateway evidence remain separate.
+
 ## 4. Update log
 
+- 2026-11-07: The shared page now loads the gateway panel and passes it gateway status; the runner still returns null. An isolated in-process test with the actual sensor and Twin plus a temporary key passed: a verified reading updated the Twin and a modified message did not. Gateway Python tests passed 11/11; the panel test passed 1/1. No browser, key-pool or shared-runner end-to-end test was performed.
+- 2026-11-05: Added an independent gateway status adapter and panel on `kareem`. `python -B -m unittest discover -s tests -p 'test_gateway*.py' -v` passed 10 tests; `node --test tests/test_gateway_panel.mjs` passed 1 test using an actual local backend status snapshot. The shared API, browser integration, and Twin rejection behavior have not been tested end to end.
 - 2026-11-05: Kareem's standalone AES-GCM gateway is implemented on branch `kareem`. With Python 3.12 and cryptography 48.0.1, `python -B -m unittest discover -s tests -p test_gateway_crypto.py -v` passed 6 tests, and `python -B -m gateway.demo` recovered a sample reading and rejected modified ciphertext. These checks do not establish end-to-end integration.
 - 2026-11-05: Python virtual environment and `cryptography` installation reported successful.
 - 2026-11-05: Initial PoC folder structure and key-pool design discussed. Actual files and execution still need confirmation.
