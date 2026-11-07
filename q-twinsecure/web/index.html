@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Q-TwinSecure | Local experiment</title>
+  <link rel="stylesheet" href="/style.css">
+  <script type="module" src="/app.js"></script>
+</head>
+<body>
+  <header><span class="eyebrow">INDUSTRIAL MONITORING / 10% PROOF OF CONCEPT</span>
+    <h1>Q-TwinSecure</h1><p>Key availability → protected connection → observation delivery → Twin freshness</p>
+    <p id="connection" role="status" aria-live="polite">Loading local runner…</p>
+  </header>
+  <main>
+    <aside><strong>Phase 2 · Scenario control foundation</strong><p>Software-emulated QKD key supply uses classical randomness. Direct AES-GCM is a PoC simplification. Component integration is pending.</p></aside>
+    <section aria-labelledby="pipeline-title"><h2 id="pipeline-title">Monitoring pipeline</h2>
+      <div class="grid">
+        <article id="key-panel"><span class="eyebrow">01 / MARWAN</span><h3>Key supply</h3><p class="empty">Not connected</p><p>Supply state and key counts await backend integration.</p></article>
+        <article id="sensor-panel"><span class="eyebrow">02 / MARIAM MOHAMED</span><h3>CO₂ sensor</h3><p class="empty">No reading available</p><p>Value, sensor ID and timestamp await backend integration.</p></article>
+        <article id="gateway-panel"><span class="eyebrow">03 / KAREEM</span><h3>Protected gateway</h3><p class="empty">Not connected</p><p>Epoch and verification state await backend integration.</p></article>
+        <article id="twin-panel"><span class="eyebrow">04 / MARIAM WAEL</span><h3>Digital Twin</h3><p class="empty">No accepted observation</p><p>Age and freshness await backend integration.</p></article>
+      </div>
+    </section>
+    <section aria-labelledby="controls-title"><h2 id="controls-title">Scenario controls <span class="tag">NANCY</span></h2>
+      <p>Reset and advance the runner clock independently. Component actions become available after integration.</p>
+      <p id="scenario-status">Scenario: not started · Delivery counts unavailable</p>
+      <p id="clock-status" role="status">Experiment clock: loading…</p>
+      <p id="action-error" role="alert" hidden></p>
+      <fieldset id="controls" disabled><legend>Local experiment actions</legend>
+        <button type="button" data-action="reset">Reset</button>
+        <label>Keys to generate <input id="key-count" type="number" min="1" max="100" step="1" value="1" disabled></label>
+        <button type="button" data-action="generate_keys" disabled>Generate keys</button>
+        <button type="button" data-action="interrupt_supply" disabled>Interrupt supply</button>
+        <button type="button" data-action="resume_supply" disabled>Resume supply</button>
+        <button type="button" data-action="start_epoch" disabled>Start epoch</button>
+        <button type="button" data-action="end_epoch" disabled>End epoch</button>
+        <button type="button" data-action="send_reading" disabled>Send reading</button>
+        <label>Advance by seconds <input id="time-step" type="number" min="1" max="3600" step="1" value="5"></label>
+        <button type="button" data-action="advance_time">Advance time</button>
+      </fieldset>
+      <p id="action-help">Loading action availability…</p>
+    </section>
+    <section aria-labelledby="events-title"><h2 id="events-title">Events &amp; results</h2><p id="event-empty">No runner events. No end-to-end experiment has run.</p><ol id="events" aria-label="Runner event history"></ol></section>
+  </main>
+  <footer>Local demonstration · No physical quantum communication · Phase 2 · Component owners preparing integration</footer>
+</body>
+</html>

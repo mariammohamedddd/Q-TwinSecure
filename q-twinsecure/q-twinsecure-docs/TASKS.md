@@ -38,11 +38,13 @@ remain outstanding. These checks do not complete the integrated plan's phases.
 
 ## Phase 2 — Sensor simulator
 
-- [ ] Create a CO₂ reading model with value, sensor ID, and timestamp.
-- [ ] Generate repeatable readings.
-- [ ] Test timestamp and reading serialization.
+- [x] Create a CO₂ reading model with value, sensor ID, and timestamp.
+- [x] Generate repeatable readings.
+- [x] Test timestamp and reading serialization.
 
 **Acceptance criteria:** The simulator produces valid timestamped readings without requiring hardware.
+
+Local verification on 2026-11-05: 10 sensor tests passed and the independent demo printed five shared-contract readings using Python 3.14. See `sensor/README.md`. Reusable sensor dashboard panel and standalone Python-backed preview are now saved. Follow-up validation passed 13 Python tests and four JavaScript check groups. Browser visual verification and connection to Nancy's shared runner remain pending; no shared integration is claimed.
 
 ## Phase 3 — Secure message / gateway
 
@@ -57,6 +59,12 @@ remain outstanding. These checks do not complete the integrated plan's phases.
 **Acceptance criteria:** A valid protected reading decrypts correctly; a modified message fails authentication; nonce reuse under the same key is prevented by design.
 
 ## Phase 4 — Twin receiver and freshness
+
+Mariam Wael component update (2026-11-05): monitor, configurable thresholds,
+status snapshot, terminal demo and owner panel implemented locally. Ten Python
+tests and one JavaScript DOM-harness test passed. Run instructions and panel
+handoff are in `MARIAM_WAEL.md`. Shared dashboard integration and authenticated
+pipeline checks remain pending; component review is next. Prepared for component review.
 
 - [ ] Accept only successfully authenticated readings.
 - [ ] Store the latest valid reading and receive timestamp.
@@ -99,3 +107,25 @@ remain outstanding. These checks do not complete the integrated plan's phases.
 - [ ] ML anomaly detection.
 - [ ] LLM incident explanations.
 - [ ] Cloud deployment and production hardening.
+
+## Nancy — dashboard Phase 1 (2026-11-07)
+
+- [x] Create branch `Nancy` and add loopback-only standard-library runner.
+- [x] Add page shell with component ownership boundaries, explicit empty states and disabled controls.
+- [x] Add foundation status API and HTTP tests.
+- [x] Prepare run instructions, scenario checklist, results table and evidence folder.
+- [ ] Review loading/disconnected states and responsive layout in a browser.
+- [ ] Confirm ownership and contract with team; review Phase 1 before Phase 2.
+
+Component integration and scenario controls remain pending. See [Nancy's checklist](../experiments/scenario_checklist.md).
+
+## Nancy — Phase 2 control foundation (2026-11-07)
+
+- [x] Record user's Phase 1 confirmation and proceed to Phase 2.
+- [x] Provide validated action API, availability metadata and bounded safe event history.
+- [x] Implement reset and bounded manual clock independently of unfinished components.
+- [x] Add controls, busy/disconnected states, action errors and event display.
+- [x] Verify 16 tests and JavaScript syntax; document API and owner handoff.
+- [ ] Review Phase 2 controls in a browser.
+- [ ] Owners complete independent components, safe-status interfaces and real-data panels.
+- [ ] Pass team Phase 2 review before Phase 3 integration.

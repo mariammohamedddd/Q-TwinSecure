@@ -63,3 +63,26 @@ The versioned status and scenario-control contract for the shared local dashboar
 
 ## Independence
 Sensor/Twin work uses local sample dictionaries; gateway tests use a local test key and fake key provider; key-pool work uses its own demo. No contributor should need another module to run their own demo.
+
+## Phase 2 control API — Nancy's implemented portion (2026-11-07)
+
+The local runner currently exposes `api_version: 1`, `phase: 2`, `scenario: "NOT_STARTED"`, and `integration_ready: false`. All four component fields and generated/delivered counts remain null until real integration. Existing component interfaces above are unchanged.
+
+`GET /api/status` also supplies:
+- `clock`: `elapsed_seconds`, `max_step_seconds` (3600), `max_elapsed_seconds` (86400). This is a manual elapsed experiment clock, paused between actions; event timestamps separately use UTC wall time.
+- `actions`: each documented action maps to `{enabled: bool, reason: string | null}`. Clients must respect availability. Only reset and advance_time are enabled now.
+- `events`: newest 100 events in chronological order, each with UTC `timestamp`, `elapsed_seconds`, known `action`, `outcome` (`success` or `unavailable`) and a fixed safe `message`. No request payloads or component secrets are stored.
+
+`POST /api/actions` requires `Content-Type: application/json`, a body of 1–4096 bytes, and one JSON object:
+
+```json
+{"action": "reset"}
+{"action": "advance_time", "seconds": 5}
+{"action": "generate_keys", "count": 1}
+```
+
+The lines above are separate request examples. `seconds` must be an integer from 1 to 3600 and total elapsed time cannot exceed 86400. `count` must be an integer from 1 to 100; generation remains unavailable. Other known actions (`interrupt_supply`, `resume_supply`, `start_epoch`, `end_epoch`, `send_reading`) accept only the action field and remain unavailable. Extra/missing fields, unknown actions, and booleans as integers are rejected. Reset clears runner clock/history and adds a reset event; it performs no component operations yet.
+
+Success returns status directly (200). Validation errors return `{error, status}` (400); known unavailable actions return the same shape (409) and add an unavailable event. Unsupported content type (415), excessive/empty body (413), unsupported transfer encoding (400), bad origin (403), timeout (408), and unknown route (404) return clear errors, but may omit status. If the browser sends Origin, it must exactly match the printed loopback origin. The server binds to 127.0.0.1 and serializes requests; there is no production authentication or network deployment.
+
+The frontend disables controls during requests and disconnection, reports action errors separately, and does not automatically retry mutations after a timeout. Domain integration and real-data panels remain owner follow-up work; phase metadata must not be mistaken for completion of the team-wide review gate.
