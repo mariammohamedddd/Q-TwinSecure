@@ -38,6 +38,20 @@ Record agreed decisions here. Add a date, decision, rationale, and consequences 
 - **Rationale:** The key-supply / connection / freshness chain is the minimum useful feasibility result.
 - **Consequences:** These remain broader research directions, not current acceptance criteria.
 
+## D-007 — Generate emulated key supply automatically
+- **Date:** 2026-11-07
+- **Decision:** Per the user's correction, enable automatic supply by default:
+  one key pair per configurable interval (default one second), up to capacity.
+- **Rationale:** The emulator models an ongoing key source. A presenter should
+  not need to press a button for every generated pair.
+- **Consequences:** A synchronized background worker waits while full, refills
+  after allocation, pauses during interruption and resumes automatically. It
+  generates no accumulated backlog after a pause. Call `close()` or use a context
+  manager to shut it down. Keep explicit generation and `auto_generate=False`
+  for deterministic tests/seeding. The preview removes its Generate button;
+  connection-epoch consumption semantics remain unchanged. Shared runner actions
+  such as `generate_keys` in `plan.md` remain optional seeding controls.
+
 ## Pending decisions
 - Confirm final repository folder name.
 - Confirm Python version used by all contributors.
