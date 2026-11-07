@@ -1,6 +1,6 @@
 # Implementation Status
 
-Last updated: 2026-11-05
+Last updated: 2026-11-07
 
 This file distinguishes **reported setup**, **drafted code**, **verified implementation**, and **not started**. Update it whenever the repository changes.
 
@@ -51,7 +51,9 @@ Use these status labels:
 
 ## Planned dashboard status
 
-The shared dashboard, API and integrated scenario runner are planned in [plan.md](plan.md) and have not been verified. Kareem's gateway status adapter and panel are implemented independently; they are not yet connected to the shared dashboard or Twin. Existing component status and local gateway evidence remain separate.
+Nancy has added the Phase 1 local runner, dashboard shell, explicit empty states and read-only status endpoint on branch `Nancy`. Automated HTTP checks passed; browser review and team confirmation remain pending. Changes are included in Nancy's dashboard contribution. Component integration, action execution, real-data owner panels and end-to-end scenarios remain not started. See [run and review checklist](../experiments/scenario_checklist.md) and [results](../experiments/results.md).
+
+Kareem's gateway status adapter and panel are implemented independently; they are not yet connected to the shared dashboard or Twin. Existing component status and local gateway evidence remain separate.
 
 ## 4. Update log
 
@@ -59,3 +61,13 @@ The shared dashboard, API and integrated scenario runner are planned in [plan.md
 - 2026-11-05: Kareem's standalone AES-GCM gateway is implemented on branch `kareem`. With Python 3.12 and cryptography 48.0.1, `python -B -m unittest discover -s tests -p test_gateway_crypto.py -v` passed 6 tests, and `python -B -m gateway.demo` recovered a sample reading and rejected modified ciphertext. These checks do not establish end-to-end integration.
 - 2026-11-05: Python virtual environment and `cryptography` installation reported successful.
 - 2026-11-05: Initial PoC folder structure and key-pool design discussed. Actual files and execution still need confirmation.
+
+- 2026-11-07: Nancy Phase 1: Python 3.14.3; dashboard HTTP tests passed 5/5; existing gateway tests passed 6/6. Browser review and team review pending; no integrated scenario evidence claimed.
+
+- 2026-11-07: Final validation: `py -B -m unittest discover -s tests -v` passed all 11 tests; `node --check web/app.js` passed. Phase 1 browser operation was subsequently confirmed by the user.
+
+## Phase 2 update — 2026-11-07
+
+User reported Phase 1 working and authorized Phase 2. Nancy's shared control foundation is saved and tested locally, included in Nancy's dashboard contribution. It supports validated reset/advance-time requests, bounded manual clock, action availability metadata, timestamped safe events, and frontend control/error/disconnected handling. All component fields remain unavailable; no connection or delivery is claimed.
+
+Actual checks: `py -B -m unittest discover -s tests -v` passed 16 tests (10 dashboard/state and 6 gateway); `node --check web/app.js` passed. Browser review of Phase 2 interactions remains pending. Current checkout has an empty key-pool implementation and no sensor/Twin implementations or owner panel files. Team-wide Phase 2 completion depends on owners' component/panel work and review; Phase 3 has not begun. See updated interface contract and experiment checklist.
