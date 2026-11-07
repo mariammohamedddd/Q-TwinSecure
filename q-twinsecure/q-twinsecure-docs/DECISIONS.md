@@ -58,3 +58,9 @@ Record agreed decisions here. Add a date, decision, rationale, and consequences 
 - Agree exact freshness thresholds.
 - Agree whether the first demo is terminal-based or includes a minimal web/dashboard interface.
 - Agree whether direct AES-GCM is sufficient for the assessed PoC or whether TLS 1.3 external PSK is mandatory.
+
+## D-007 — Deterministic shared-runner demonstration
+- **Date:** 2026-11-07
+- **Decision:** Integrate Marwan's pool using its existing manual mode (`auto_generate=False`), a shared manual UTC experiment clock, and a fixed sensor sequence. Keep owner standalone previews unchanged.
+- **Rationale:** Nancy's authorized integration needs reproducible key counts and freshness transitions controlled by the presenter. This uses existing interfaces without modifying owner internals.
+- **Consequences:** Generate keys explicitly after resume; wall-clock waiting does not age observations. Use Advance time for freshness transitions. Default demo thresholds are 5/15 seconds and pool capacity is 10 pairs. Team/browser review remains pending.

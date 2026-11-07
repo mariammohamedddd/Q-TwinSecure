@@ -1,4 +1,4 @@
-﻿# Nancy's local dashboard — Phase 2
+﻿# Integrated demo: run and review
 
 From the repository root in PowerShell:
 
@@ -7,46 +7,49 @@ cd q-twinsecure
 py -B main.py
 ```
 
-Open http://127.0.0.1:8000. If occupied, use `py -B main.py --port 8001` and the printed URL. Stop with Ctrl+C. Restart after code changes; the old server does not reload automatically. The control runner needs only Python's standard library; gateway tests need `cryptography`.
+Open http://127.0.0.1:8000. Use `--port 8001` if occupied. Restart the server after code updates and refresh the page. Ctrl+C stops it. Dependencies: Python and cryptography (install using `py -m pip install -r q-twinsecure-docs/requirements.txt` if missing).
 
-## Automated checks
+The shared dashboard loads the existing key, sensor, gateway and Twin panels. Standalone owner previews remain available for independent testing; they do not need to run alongside main.py.
+
+## Demonstration configuration
+
+- Real QKDKeyPool, capacity 10 pairs, `auto_generate=False` for repeatability. Click Generate keys explicitly; interruption/resumption changes generation availability. The independent key-pool preview still uses automatic supply.
+- Manual experiment clock, starting at the UTC time of reset/start. Wall-clock waiting does not age the Twin. Advance time explicitly; sensor timestamps and Twin queries use the same clock.
+- Fixed sensor sequence: 650, 700, 680 ppm, repeating.
+- Twin thresholds: CURRENT when age <= 5 seconds; DELAYED when 5 < age <= 15; MISSING when age > 15 or no accepted observation.
+- Clock advancement: 1–3600 integer seconds per request, maximum total 86400. Reset recreates the pool, sensor, Twin and clock; closes the active epoch, clears counts/history, and adds a reset event.
+
+## Presenter sequence
+
+1. Reset. Generate exactly **1** key pair, start an epoch, send two readings. Expect generated=2, delivered=2, keys consumed=1, CURRENT.
+2. Interrupt supply and send another reading. Expect connected, delivered=3, consumed still 1. The existing epoch remains usable.
+3. End epoch. Pool should be empty. Click Start epoch: expect a visible no-key error and disconnected gateway. Send reading is disabled. Direct requests also reject sends without an epoch.
+4. Advance time by **6** seconds: DELAYED. Advance another **10** seconds: MISSING. Delivered remains 3; the last accepted observation stays visible.
+5. Resume supply, generate **1** key pair, start an epoch and send a reading. Expect consumed=2, delivered=4, CURRENT with a new epoch ID.
+6. Reset and repeat from an empty pool.
+
+If more than one pair was generated, interruption can leave buffered keys available for new epochs. That is expected; reset and seed exactly one for the empty-pool demonstration.
+
+Tampering is verified through automated tests, not a dashboard mutation button. The tests modify a protected message and confirm rejection without updating the Twin or delivery count. Status and events contain no keys, nonce, ciphertext or plaintext secret payloads.
+
+## Checks
 
 ```powershell
 py -B -m unittest discover -s tests -v
+$env:PYTHON = 'py'
+node --test tests/test_gateway_panel.mjs tests/test_sensor_panel.mjs tests/test_twin_panel.cjs
 node --check web/app.js
 ```
 
-## Phase 2 review checklist
+## Browser review pending
 
-Phase 1 was reported working by Nancy on 2026-11-07. The following checks cover the new controls:
+- [ ] All four owner panels load with no browser console errors.
+- [ ] Run the presenter sequence and compare displayed values/counts with the expectations.
+- [ ] Invalid inputs show errors and never change state unexpectedly.
+- [ ] Controls prevent duplicate requests while an action is pending.
+- [ ] Stop server: all panels show unavailable/disconnected; controls disable. Restart: reconnects with clean state.
+- [ ] Verify reset clears sensor chart and Twin observation, and check narrow-window/keyboard usability.
+- [ ] Capture safe screenshots and record actual presenter results under evidence/.
+- [ ] Team reviews Phase 3 before presentation rehearsal and final evidence work.
 
-- [ ] Open the page; confirm Phase 2 and the runner-connected message.
-- [ ] Advance the clock by 5 seconds twice; confirm 10 seconds and two success events.
-- [ ] Reset; confirm 0 seconds and only the new reset event.
-- [ ] Confirm all component actions remain disabled, with unavailable reasons on hover.
-- [ ] Confirm component panels and delivery counts remain unavailable, never fabricated.
-- [ ] Enter an invalid time step; confirm it cannot advance the clock.
-- [ ] At the cumulative clock limit of 86400 seconds, try advancing again; confirm a visible action error. Reset and try again to confirm recovery.
-- [ ] Stop the server; confirm disconnected state and disabled controls. Restart; confirm automatic reconnection and clean in-memory state.
-- [ ] Check a narrow window, keyboard controls, and visible focus indicators.
-
-Browser rendering, duplicate-click prevention and disconnected behavior are implemented but not browser-automated. HTTP tests cover API validation and server lifecycle. Do not treat manual checks above as passed until performed.
-
-## Owner handoff and review gate
-
-Nancy owns `main.py`, the shared HTML/CSS/JavaScript, API, controls and event area. Domain owners retain their component directories and panel files: Marwan `web/key-panel.js`, Mariam Mohamed `web/sensor-panel.js`, Kareem `web/gateway-panel.js`, Mariam Wael `web/twin-panel.js`. The existing panel IDs remain `key-panel`, `sensor-panel`, `gateway-panel`, `twin-panel`.
-
-Current checkout: key_pool.py is empty; sensor and Digital Twin implementations and all four owner panel files are absent. Kareem's crypto module and six standalone tests exist and pass. Nancy has not changed domain internals or imported unfinished modules. Owner component interfaces remain in INTERFACE_CONTRACT.md. The shared API exposes null component values until real adapters exist; Phase 2 status is not integrated acceptance.
-
-Each owner must run their independent demo and focused tests, expose safe status, and implement/test their panel. When those are ready, agree shared wiring with Nancy. Do not begin Phase 3 epoch establishment or reading delivery until the Phase 2 team review gate passes.
-
-## Later scenario acceptance (not executed)
-
-| Step | Expected evidence |
-| --- | --- |
-| Normal | Generate one key, establish epoch, deliver multiple verified readings; one key consumed and Twin CURRENT. |
-| Interrupted, epoch active | Interrupt generation; readings still arrive over the existing epoch. |
-| Epoch ended, pool empty | New epoch fails; no additional readings delivered; controlled clock yields DELAYED then MISSING. |
-| Recovery | Resume supply, generate a key, establish a new epoch, deliver a reading; Twin CURRENT. |
-
-Record actual commands, configuration and results; verify no key material appears. Direct AES-GCM is a PoC simplification. Software-emulated QKD uses classical randomness, not physical quantum communication.
+HTTP integration and isolated panel tests do not establish visual/browser acceptance. No browser automation tool was available in this session. This is a local in-memory software model using classical randomness and direct AES-GCM; no physical QKD, TLS, production replay protection or guaranteed secure memory erasure is claimed.

@@ -139,3 +139,15 @@ Component integration and scenario controls remain pending. See [Nancy's checkli
 - [ ] Confirm proposed record adapter with Marwan and wire his real pool.
 - [ ] Integrate sensor delivery and authenticated Twin acceptance; complete Phase 3 review.
 - [ ] Review gateway panel visually in the shared dashboard.
+
+## Nancy — integrated runner (2026-11-07)
+
+- [x] Merge Marwan's real pool/panel and Kareem's latest epoch/pool test from main.
+- [x] Use actual KeyRecord attributes for private endpoint key handoff.
+- [x] Wire key controls, epoch lifecycle, sensor protection, verification and Twin acceptance.
+- [x] Expose real status/counts and load all four existing owner panels.
+- [x] Share one manual clock for readings, receipt, freshness and events; reset all components.
+- [x] Verify full HTTP normal/interruption/expiry/recovery/reset flow and tampering/capacity/accounting checks.
+- [x] Document deterministic configuration, current API and presenter guide.
+- [ ] Review the assembled dashboard in a browser; confirm disconnect/reconnect, layout and duplicate-click handling.
+- [ ] Team Phase 3 review, final presentation rehearsal, screenshots and evidence.

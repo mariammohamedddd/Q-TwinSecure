@@ -123,3 +123,17 @@ The shared page loads app.js as an ES module; app.js imports `/gateway-panel.js`
 `actions.start_epoch` is enabled only when a provider is attached and no epoch is active. The actual action checks the pool for a key. `actions.end_epoch` is enabled only while connected. With the default empty key-pool implementation, start remains disabled. The page displays real DISCONNECTED gateway state even without a pool.
 
 The existing direct AES-GCM envelope and its random nonce scheme are unchanged. This is not TLS or a replay-resistant network protocol; no production security or full end-to-end acceptance is claimed.
+
+## Integrated runner contract — current on Nancy (2026-11-07)
+
+This section supersedes the earlier placeholder and proposed adapter notes. The runner uses the actual `QKDKeyPool`, `CO2SensorSimulator`, `GatewayStatus` and `TwinMonitor`. `consume_key()` returns Marwan's immutable `KeyRecord`; the runner reads its attributes directly and never serializes the record. One record is consumed per epoch; repeated readings reuse the active matching keys privately.
+
+`GET /api/status` keeps api_version=1 and now reports phase=3 and integration_ready=true (components wired; not browser acceptance). `key_pool` is the safe get_status() snapshot. `sensor` is the latest generated reading or null. `gateway` is Kareem's safe snapshot. `twin` is Mariam Wael's get_status(now) dictionary, including age_seconds, freshness, observation fields and thresholds. Counts begin at zero and delivery increments only after authentication and Twin acceptance both succeed.
+
+All eight documented actions are implemented. start_epoch is available while disconnected, and may fail 409 if the pool is empty. end_epoch and send_reading are disabled without an epoch and reject direct requests too. generate_keys accepts count=1..100, bounded by pool capacity (default 10); zero additions due to interruption/full pool return 409. Partial capacity returns the actual generated count in a safe event. Interrupt/resume preserves active epochs and buffered keys.
+
+The shared runner deliberately uses `auto_generate=False`; the standalone key preview retains its automatic mode. Advance_time moves one UTC experiment clock used by sensor generation, Twin receipt and age, and event timestamps. Clock does not advance on polling or wall time. Default thresholds are 5 and 15 seconds; these are demonstration settings. Reset recreates all components with a fresh manual pool, no active epoch, zero counts, no observations and one reset event.
+
+Events contain success/failure outcomes and fixed safe messages (including non-secret numeric counts). Invalid request-schema inputs do not mutate state or echo payloads. Failure status reflects current backend state. No secret bytes or protected envelope are exposed. Browser action timeout results remain uncertain until status refresh; mutations are not retried automatically.
+
+app.js imports all four owner modules and fetches status once centrally. Sensor receives update(status.sensor), Twin receives update(status.twin), and key/gateway renderers receive their corresponding safe objects. Disconnection clears live claims across panels. Panel styles use existing inline styles; the local server CSP permits inline styling while scripts remain same-origin only. No production hosting/authentication is provided.

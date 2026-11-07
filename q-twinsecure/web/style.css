@@ -27,3 +27,8 @@ button:focus-visible, input:focus-visible { outline: 3px solid #e8c877; outline-
 #action-error { color: #ffb4a9; }
 #events { padding-left: 24px; max-height: 320px; overflow: auto; }
 #events li { padding: 10px 0; border-bottom: 1px solid #33425a; line-height: 1.6; overflow-wrap: anywhere; }
+
+/* Preserve readable text inside the owner's light-background key panel. */
+.qts-key-panel p, .qts-key-panel label { color: inherit; }
+#sensor-panel, #twin-panel { grid-column: 1 / -1; }
+#sensor-panel { padding: 0; overflow: hidden; }

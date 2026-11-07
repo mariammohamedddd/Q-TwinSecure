@@ -21,7 +21,7 @@ The main question is:
 
 **How does constrained emulated key supply affect secure connection establishment/renewal and the freshness of Digital Twin observations?**
 
-The team is planning one integrated local dashboard for the committee. Each member owns a backend contribution and a visual section; see [plan.md](plan.md). The Phase 1 local shell is available on branch `Nancy`; component integration remains pending. See [startup and review instructions](../experiments/scenario_checklist.md).
+The team is planning one integrated local dashboard for the committee. Each member owns a backend contribution and a visual section; see [plan.md](plan.md). The integrated local runner and all four owner panels are available on branch `Nancy`; automated API scenarios pass, and browser/team review remains pending. See [startup and review instructions](../experiments/scenario_checklist.md).
 
 ## 2. Current PoC scope
 

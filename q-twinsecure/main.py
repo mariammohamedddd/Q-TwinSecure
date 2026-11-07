@@ -1,4 +1,4 @@
-"""Nancy's Phase 2 local control API; domain integration remains pending."""
+"""Integrated local sensor-to-Twin demonstration with presenter-controlled time."""
 import argparse
 from collections import deque
 from datetime import datetime, timezone, timedelta
@@ -160,11 +160,13 @@ class RunnerState:
                 message = "Supply resumed; generate keys to replenish the manual pool."
             elif action == "start_epoch":
                 self.start_epoch()
+                self.scenario = "EPOCH_ACTIVE"
                 message = "Connection epoch started using one matching key pair."
             elif action == "end_epoch":
                 if self._device_key is None:
                     raise ActionError("No active connection epoch.", 409)
                 self.end_epoch()
+                self.scenario = "EPOCH_ENDED"
                 message = "Connection epoch ended."
             elif action == "send_reading":
                 if self._device_key is None:

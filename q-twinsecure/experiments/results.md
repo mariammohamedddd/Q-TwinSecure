@@ -34,3 +34,26 @@ Phase 1 is a shell, not an end-to-end experiment. No physical QKD or TLS impleme
 ## Latest main merge verification — 2026-11-07
 
 Merged origin/main d846b6d into Nancy, retaining runner coordination and including Kareem's actual sensor/gateway/Twin rejection test. Full Python suite: 50 passed. JavaScript gateway, sensor and Twin test files: 4 test entries passed. Shared app/gateway module syntax checks passed. Actual key-pool integration and browser review remain pending.
+
+## Current integrated-runner results — 2026-11-07
+
+All older unavailable/not-run entries above are historical. The following results use the real components in Nancy's integrated runner after merging Kareem PR #5.
+
+- Full Python suite: `py -B -m unittest discover -s tests -v` — 69 passed.
+- With `$env:PYTHON = 'py'`, `node --test tests/test_gateway_panel.mjs tests/test_sensor_panel.mjs tests/test_twin_panel.cjs` — 4 test entries passed.
+- `node --check web/app.js` and `node --check web/key-panel.js` — passed.
+- API story tested over real loopback HTTP with capacity 10, manual generation, fixed readings and one shared clock (thresholds 5/15 seconds):
+
+| API checkpoint | Available keys | Consumed pairs | Delivered | Freshness | Result |
+| --- | ---: | ---: | ---: | --- | --- |
+| Generate 1, start epoch, send 1 | 0 | 1 | 1 | CURRENT | PASS |
+| Interrupt supply, send on active epoch | 0 | 1 | 2 | CURRENT | PASS |
+| End epoch, request new epoch | 0 | 1 | 2 | CURRENT until time advances | 409 as expected |
+| Advance 6 seconds | 0 | 1 | 2 | DELAYED | PASS |
+| Advance another 10 seconds | 0 | 1 | 2 | MISSING | PASS |
+| Resume, generate 1, start epoch, send | 0 | 2 | 3 | CURRENT | PASS |
+| Reset | 0 | 0 | 0 | MISSING; no observation | PASS |
+
+Tampering and invalid Twin readings leave observation/delivery count unchanged; repeated protected readings use one pool allocation; buffered keys survive interruption; pool capacity is respected. Status checks exclude key bytes and protected envelope fields.
+
+Browser visual acceptance, console/network inspection in an actual browser, screenshots and team presenter rehearsal remain pending. HTTP and isolated panel tests do not establish those checks. No browser automation tool was available. The presenter checklist uses two initial readings (one more than this automated scenario) and consequently expects final delivered=4.

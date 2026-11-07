@@ -19,15 +19,15 @@ This file distinguishes **reported setup**, **drafted code**, **verified impleme
 | Component | Status | Notes |
 |---|---|---|
 | CO₂ sensor simulator | In progress | Independent backend and reusable sensor panel saved; 13 Python tests and four JavaScript check groups passed. Standalone HTTP preview uses real simulator data. Included in this branch; shared-runner integration and browser visual verification pending. |
-| Emulated QKD key pool | In progress | Automatic interval-based supply, backend and demo verified locally on branch `Marwan`: 16 pool tests passed. Hard capacity rejects extra keys without replacing stored records. Included in this rebase; shared integration and browser visual verification remain outstanding. See `qkd/README.md`. |
-| Device gateway | In progress | Standalone encryption implemented and tested locally; integration not started. |
-| Twin gateway | In progress | Standalone decryption implemented and tested locally; integration not started. |
-| AES-GCM protection | In progress | Standalone demo and tests passed locally; end-to-end integration remains outstanding. |
+| Emulated QKD key pool | In progress | Real component wired into shared runner; automated integration passed. Shared browser/presentation review pending. |
+| Device gateway | In progress | Real component wired into shared runner; automated integration passed. Shared browser/presentation review pending. |
+| Twin gateway | In progress | Real component wired into shared runner; automated integration passed. Shared browser/presentation review pending. |
+| AES-GCM protection | In progress | Real component wired into shared runner; automated integration passed. Shared browser/presentation review pending. |
 | TLS 1.3 external PSK | Not started | Optional for this small PoC; do not claim it is implemented. |
-| Digital Twin freshness logic | In progress | Monitor and local preview tested: 10 Python tests and 1 JavaScript DOM-harness test passed on 2026-11-05. Owner panel added. Browser visual review and shared integration pending. |
-| Main end-to-end flow | Not started | |
-| Automated tests | In progress | Latest recorded component checks: 13 sensor Python tests and four JavaScript check groups; 11 gateway Python tests and one panel test; 10 Twin Python tests and one panel test; 20 Marwan Python tests (16 pool and four preview API tests). These are separate component runs; a combined shared-runner end-to-end run remains outstanding. |
-| Normal/interruption/recovery experiment | Not started | |
+| Digital Twin freshness logic | In progress | Real component wired into shared runner; automated integration passed. Shared browser/presentation review pending. |
+| Main end-to-end flow | Implemented and tested | Real HTTP normal/interruption/expiry/recovery/reset flow passed on Nancy; browser review pending. |
+| Automated tests | Implemented and tested | Combined suite: 69 Python tests; 4 JavaScript test entries passed. |
+| Normal/interruption/recovery experiment | In progress | Automated API scenario passed; presenter rehearsal and screenshots pending. |
 | ML anomaly detection | Out of current PoC scope | Broader research direction only. |
 | LLM explanations | Out of current PoC scope | Broader research direction only. |
 | Physical QKD / physical sensor | Out of current PoC scope | |
@@ -51,11 +51,9 @@ Use these status labels:
 
 ## Dashboard and integration status
 
-Nancy's Phase 1 local runner, dashboard shell, explicit empty states and read-only status endpoint are included, together with the Phase 2 reset/advance-time controls described below. Phase 1 browser operation was reported working; Phase 2 browser interaction review and team confirmation remain pending. Mariam Mohamed's independent sensor backend and reusable owner panel are also included, with a Python-backed preview; shared-runner integration and sensor browser visual verification remain pending. Component integration and end-to-end scenarios remain not started. See [run and review checklist](../experiments/scenario_checklist.md) and [results](../experiments/results.md).
+Nancy's shared runner now connects the actual key pool, sensor, gateway and Twin. All four owner panels are loaded by the shared dashboard and receive real API snapshots. Keys remain private; only authenticated readings accepted by the Twin increment delivery counts. Reset recreates all components. The runner uses supported manual key generation and one shared manual experiment clock. See [current run/review guide](../experiments/scenario_checklist.md).
 
-Kareem's gateway status adapter and panel are implemented independently. The shared page loads the panel, but the runner still returns null gateway status. An isolated sensor/gateway/Twin test passed as recorded below; it does not establish shared-runner end-to-end integration.
-
-Marwan's automatic key supply, bounded matching pools, `web/key-panel.js` and independent real-pool preview are included. Pool and preview API tests passed; browser visual verification and shared-dashboard integration remain outstanding. The independent Twin monitor and owner panel are also included; their browser review and shared integration remain pending. The shared runner still exposes unavailable component fields and does not establish epochs or deliver observations.
+Merged Kareem's latest main contribution (PR #5, a309f46 via d41926f) while preserving Nancy's integration. Combined automated verification passed: 69 Python tests and 4 JavaScript test entries. No assembled-dashboard browser automation or screenshots were captured. Visual review, team Phase 3 acceptance, presentation rehearsal and final evidence remain pending. Older entries below are historical checkpoints.
 
 ## 4. Update log
 
@@ -98,3 +96,5 @@ Reviewed and merged origin/main at d846b6d (Kareem PR #2), including the gateway
 
 Post-merge verification: `py -B -m unittest discover -s tests -v` passed 50 tests; app.js and gateway-panel.js syntax checks passed. With `$env:PYTHON = 'py'`, `node --test tests/test_gateway_panel.mjs tests/test_sensor_panel.mjs tests/test_twin_panel.cjs` passed 4 test entries. Real key pool and shared sensor-to-Twin orchestration remain outstanding; pulling the component tests does not enable those dashboard actions. Browser review remains pending.
 Actual checks at Nancy's Phase 2 checkpoint: `py -B -m unittest discover -s tests -v` passed 16 tests (10 dashboard/state and 6 gateway); `node --check web/app.js` passed. Browser review of Phase 2 interactions remains pending. Those checks preceded the merged component contributions and are not a result for the current combined checkout. The checkout now includes the independent sensor, key-pool, gateway and Twin implementations and their owner panels, with component evidence recorded above. Shared-runner domain integration remains pending. Team-wide Phase 2 completion depends on owners' component/panel work and review; the shared Phase 3 scenario is not implemented. See updated interface contract and experiment checklist.
+
+- 2026-11-07: Integrated the real components in Nancy's runner and shared dashboard; added API scenario and rejection/accounting tests. `py -B -m unittest discover -s tests -v` passed 69 tests after merging Kareem PR #5. With PYTHON=py, gateway/sensor/Twin Node test files passed 4 test entries. app.js and key-panel.js syntax checks passed. Browser review and screenshots remain pending. Initial sandbox Python execution was denied; the approved rerun outside the sandbox passed.
