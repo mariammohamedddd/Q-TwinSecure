@@ -1,4 +1,4 @@
-﻿# Nancy's local dashboard — Phase 2
+# Nancy's local dashboard — Phase 2
 
 From the repository root in PowerShell:
 
@@ -24,7 +24,7 @@ Phase 1 was reported working by Nancy on 2026-11-07. The following checks cover 
 - [ ] Advance the clock by 5 seconds twice; confirm 10 seconds and two success events.
 - [ ] Reset; confirm 0 seconds and only the new reset event.
 - [ ] Confirm all component actions remain disabled, with unavailable reasons on hover.
-- [ ] Confirm component panels and delivery counts remain unavailable, never fabricated.
+- [ ] Confirm the sensor starts empty, advance_time generates one reading with the experiment timestamp, and reset clears it. Other components and delivery remain unavailable.
 - [ ] Enter an invalid time step; confirm it cannot advance the clock.
 - [ ] At the cumulative clock limit of 86400 seconds, try advancing again; confirm a visible action error. Reset and try again to confirm recovery.
 - [ ] Stop the server; confirm disconnected state and disabled controls. Restart; confirm automatic reconnection and clean in-memory state.
@@ -36,7 +36,7 @@ Browser rendering, duplicate-click prevention and disconnected behavior are impl
 
 Nancy owns `main.py`, the shared HTML/CSS/JavaScript, API, controls and event area. Domain owners retain their component directories and panel files: Marwan `web/key-panel.js`, Mariam Mohamed `web/sensor-panel.js`, Kareem `web/gateway-panel.js`, Mariam Wael `web/twin-panel.js`. The existing panel IDs remain `key-panel`, `sensor-panel`, `gateway-panel`, `twin-panel`.
 
-Current checkout: key_pool.py is empty; sensor and Digital Twin implementations and all four owner panel files are absent. Kareem's crypto module and six standalone tests exist and pass. Nancy has not changed domain internals or imported unfinished modules. Owner component interfaces remain in INTERFACE_CONTRACT.md. The shared API exposes null component values until real adapters exist; Phase 2 status is not integrated acceptance.
+Current checkout includes independent sensor, key pool, gateway and Twin components. The sensor is wired into the shared runner: advance_time generates one reading, status exposes it, and reset clears it. The shared page updates the sensor panel using its existing polling loop. Other component status and delivery remain unavailable. The isolated gateway component tests do not establish shared secure-delivery integration. See INTERFACE_CONTRACT.md and IMPLEMENTATION_STATUS.md for current verification.
 
 Each owner must run their independent demo and focused tests, expose safe status, and implement/test their panel. When those are ready, agree shared wiring with Nancy. Do not begin Phase 3 epoch establishment or reading delivery until the Phase 2 team review gate passes.
 

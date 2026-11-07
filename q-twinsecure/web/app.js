@@ -1,5 +1,6 @@
 ﻿const connection = document.querySelector('#connection');
 import { renderGatewayPanel } from './gateway-panel.js';
+import './sensor-panel.js';
 
 const controls = document.querySelector('#controls');
 const actionError = document.querySelector('#action-error');
@@ -25,10 +26,12 @@ function render(status) {
   latestStatus = status;
   online = true;
   renderGatewayPanel(document.querySelector('#gateway-panel'), status.gateway);
+  document.querySelector('co2-sensor-panel').update(status.sensor);
   connection.textContent = 'Local runner connected · Component integration pending';
   connection.dataset.state = 'connected';
   document.querySelector('#clock-status').textContent = `Experiment clock: ${status.clock.elapsed_seconds} seconds (manual; paused between actions)`;
-  document.querySelector('#action-help').textContent = 'Component actions are unavailable until their owners supply tested interfaces. Clock limit: 86400 seconds; reset to restart.';
+  document.querySelector('#action-help').textContent = 'Advance time generates one sensor reading at the experiment timestamp. Reset clears readings. Protected delivery remains unavailable. Clock limit: 86400 seconds.';
+  document.querySelector('#scenario-status').textContent = `Scenario: not started · ${status.readings_generated} sensor readings generated · Delivery unavailable`;
   const events = document.querySelector('#events');
   events.replaceChildren();
   document.querySelector('#event-empty').hidden = status.events.length > 0;
@@ -55,6 +58,7 @@ async function request(path, options = {}) {
 function disconnected() {
   online = false;
   renderGatewayPanel(document.querySelector('#gateway-panel'), null);
+  document.querySelector('co2-sensor-panel').unavailable();
   connection.textContent = 'Disconnected · Local runner unavailable. Check the terminal; retrying automatically. Displayed events may be stale.';
   connection.dataset.state = 'disconnected';
   setControls();

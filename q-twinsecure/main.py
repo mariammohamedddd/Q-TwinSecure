@@ -1,17 +1,20 @@
-﻿"""Nancy's Phase 2 local control API; domain integration remains pending."""
+"""Phase 2 local control API with sensor integration; protected delivery pending."""
 import argparse
 from collections import deque
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 import json
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from pathlib import Path
 from urllib.parse import urlsplit
+from sensor import CO2SensorSimulator
 
 WEB = Path(__file__).resolve().parent / "web"
 ASSETS = {"/": ("index.html", "text/html; charset=utf-8"),
           "/app.js": ("app.js", "text/javascript; charset=utf-8"),
           "/style.css": ("style.css", "text/css; charset=utf-8"),
-          "/gateway-panel.js": ("gateway-panel.js", "text/javascript; charset=utf-8")}
+          "/gateway-panel.js": ("gateway-panel.js", "text/javascript; charset=utf-8"),
+          "/sensor-panel.js": ("sensor-panel.js", "text/javascript; charset=utf-8"),
+          "/sensor-panel.css": ("sensor-panel.css", "text/css; charset=utf-8")}
 ACTIONS = ("reset", "generate_keys", "interrupt_supply", "resume_supply",
            "start_epoch", "end_epoch", "send_reading", "advance_time")
 MAX_STEP_SECONDS = 3600
@@ -30,6 +33,13 @@ class RunnerState:
     def __init__(self):
         self.elapsed_seconds = 0
         self.events = deque(maxlen=MAX_EVENTS)
+        self._reset_sensor()
+
+    def _reset_sensor(self):
+        self.clock_origin = datetime.now(timezone.utc)
+        self.sensor = CO2SensorSimulator(
+            seed=42, clock=lambda: self.clock_origin + timedelta(seconds=self.elapsed_seconds))
+        self.readings_generated = 0
 
     def record(self, action, outcome, message):
         self.events.append({"timestamp": datetime.now(timezone.utc).isoformat(),
@@ -42,8 +52,8 @@ class RunnerState:
                      "Component integration pending; action unavailable in Phase 2."}
                      for action in ACTIONS}
         return {"api_version": 1, "phase": 2, "scenario": "NOT_STARTED",
-                "integration_ready": False, "key_pool": None, "sensor": None,
-                "gateway": None, "twin": None, "readings_generated": None,
+                "integration_ready": False, "key_pool": None, "sensor": self.sensor.get_status(),
+                "gateway": None, "twin": None, "readings_generated": self.readings_generated,
                 "readings_delivered": None, "events": list(self.events),
                 "clock": {"elapsed_seconds": self.elapsed_seconds,
                           "max_step_seconds": MAX_STEP_SECONDS,
@@ -80,10 +90,13 @@ class RunnerState:
         if action == "reset":
             self.elapsed_seconds = 0
             self.events.clear()
-            self.record(action, "success", "Local runner state reset; components remain unavailable.")
+            self._reset_sensor()
+            self.record(action, "success", "Runner and sensor reset; protected delivery remains unavailable.")
         else:
             self.elapsed_seconds += payload["seconds"]
-            self.record(action, "success", "Experiment clock advanced; no component data changed.")
+            self.sensor.read()
+            self.readings_generated += 1
+            self.record(action, "success", "Clock advanced and one sensor reading generated; not delivered.")
         return self.status()
 
 
@@ -101,6 +114,18 @@ class DashboardHandler(BaseHTTPRequestHandler):
     def json_response(self, status, payload):
         self.respond(status, json.dumps(payload, allow_nan=False).encode())
 
+    def reject_request(self, status, payload):
+        """Drain a bounded rejected body so Windows can receive the HTTP error."""
+        try:
+            length = int(self.headers.get("Content-Length", "0"))
+            if length > 0:
+                self.connection.settimeout(3)
+                self.rfile.read(min(length, 4097))
+        except (ValueError, OSError):
+            # Invalid/incomplete bodies still receive the original rejection.
+            pass
+        self.json_response(status, payload)
+
     def do_GET(self):
         path = urlsplit(self.path).path
         if path == "/api/status":
@@ -114,23 +139,25 @@ class DashboardHandler(BaseHTTPRequestHandler):
     def do_POST(self):
         self.close_connection = True
         if urlsplit(self.path).path != "/api/actions":
-            self.json_response(404, {"error": "Not found"})
+            self.reject_request(404, {"error": "Not found"})
             return
         expected_origin = f"http://127.0.0.1:{self.server.server_port}"
         origin = self.headers.get("Origin")
         if origin is not None and origin != expected_origin:
-            self.json_response(403, {"error": "Use the local dashboard origin."})
+            self.reject_request(403, {"error": "Use the local dashboard origin."})
             return
         if self.headers.get_content_type() != "application/json":
-            self.json_response(415, {"error": "Content-Type must be application/json."})
+            self.reject_request(415, {"error": "Content-Type must be application/json."})
             return
         if self.headers.get("Transfer-Encoding") is not None:
-            self.json_response(400, {"error": "Transfer encoding is unsupported."})
+            self.reject_request(400, {"error": "Transfer encoding is unsupported."})
             return
         try:
             length = int(self.headers.get("Content-Length", "0"))
             if not 1 <= length <= 4096:
-                raise ActionError("Request body must be between 1 and 4096 bytes.", 413)
+                self.reject_request(413, {"error": "Request body must be between 1 and 4096 bytes.",
+                                          "status": self.server.state.status()})
+                return
             self.connection.settimeout(3)
             raw = self.rfile.read(length)
             if len(raw) != length:

@@ -1,6 +1,7 @@
 ﻿"""Real HTTP checks for Nancy's Phase 2 control API."""
 import json
 import threading
+from datetime import datetime, timedelta
 import unittest
 from http.client import HTTPConnection
 from main import create_server, RunnerState, ActionError, MAX_EVENTS
@@ -38,7 +39,9 @@ class DashboardTests(unittest.TestCase):
 
     def test_page_and_assets(self):
         for path, expected in [("/", "text/html"), ("/app.js", "text/javascript"),
-                               ("/style.css", "text/css")]:
+                               ("/style.css", "text/css"),
+                               ("/sensor-panel.js", "text/javascript"),
+                               ("/sensor-panel.css", "text/css")]:
             with self.subTest(path=path):
                 code, kind, body = self.request(path)
                 self.assertEqual(code, 200)
@@ -52,8 +55,9 @@ class DashboardTests(unittest.TestCase):
         self.assertEqual(status['phase'], 2)
         self.assertFalse(status["integration_ready"])
         for field in ("key_pool", "sensor", "gateway", "twin",
-                      "readings_generated", "readings_delivered"):
+                      "readings_delivered"):
             self.assertIsNone(status[field])
+        self.assertEqual(status['readings_generated'], 0)
         self.assertEqual(status["events"], [])
         self.assertTrue(status['actions']['reset']['enabled'])
         self.assertFalse(status['actions']['start_epoch']['enabled'])
@@ -70,6 +74,34 @@ class DashboardTests(unittest.TestCase):
         self.assertEqual(len(status['events']), 1)
         self.assertEqual(status['events'][0]['action'], 'reset')
         self.assertIsNone(status['readings_delivered'])
+
+    def test_sensor_uses_experiment_clock_without_claiming_delivery(self):
+        origin = self.server.state.clock_origin
+        code, first = self.action({'action': 'advance_time', 'seconds': 5})
+        self.assertEqual(code, 200)
+        self.assertEqual(first['sensor'], self.server.state.sensor.get_status())
+        self.assertEqual(datetime.fromisoformat(first['sensor']['timestamp']),
+                         origin + timedelta(seconds=5))
+        self.assertEqual(first['readings_generated'], 1)
+        self.assertIsNone(first['readings_delivered'])
+        self.assertIsNone(first['twin'])
+        self.assertFalse(first['actions']['send_reading']['enabled'])
+        # Status polling must neither generate nor deliver observations.
+        for _ in range(2):
+            _, _, raw = self.request('/api/status')
+            self.assertEqual(json.loads(raw)['sensor'], first['sensor'])
+            self.assertEqual(json.loads(raw)['readings_generated'], 1)
+        _, second = self.action({'action': 'advance_time', 'seconds': 3})
+        self.assertEqual(datetime.fromisoformat(second['sensor']['timestamp']),
+                         origin + timedelta(seconds=8))
+        self.assertEqual(second['readings_generated'], 2)
+        # Responses contain copies, not mutable references into sensor state.
+        self.server.state.status()['sensor']['value_ppm'] = -1
+        self.assertGreaterEqual(self.server.state.status()['sensor']['value_ppm'], 400)
+        _, reset = self.action({'action': 'reset'})
+        self.assertIsNone(reset['sensor'])
+        self.assertEqual(reset['readings_generated'], 0)
+        self.assertIsNone(reset['readings_delivered'])
 
     def test_component_actions_explicitly_unavailable(self):
         for action in ('generate_keys', 'interrupt_supply', 'resume_supply',
