@@ -15,17 +15,24 @@ Build the smallest complete demonstration first. Do not add advanced features un
 - [ ] Confirm Python version and activate the virtual environment.
 - [ ] Add `requirements.txt`.
 - [ ] Confirm package imports work.
-- [ ] Add a `.gitignore` for `venv/`, `__pycache__/`, `.pytest_cache/`, `.env`, and local output files.
+- [x] Add a `.gitignore` for `venv/`, `__pycache__/`, `.pytest_cache/`, `.env`, and local log files.
 
 ## Phase 1 — Emulated key supply
 
-- [ ] Implement key record structure (`key_id`, key material).
-- [ ] Implement bounded matching device-side and Twin-side pools.
-- [ ] Generate 32-byte key material using `secrets.token_bytes(32)`.
-- [ ] Implement key consumption that returns matching endpoint records.
-- [ ] Implement supply interruption and recovery.
-- [ ] Expose safe status metrics; never expose raw key material.
-- [ ] Test capacity limits, empty pool, interruption, recovery, and endpoint synchronization.
+- [x] Implement key record structure (`key_id`, key material).
+- [x] Implement bounded matching device-side and Twin-side pools.
+- [x] Generate 32-byte key material using `secrets.token_bytes(32)`.
+- [x] Implement key consumption that returns matching endpoint records.
+- [x] Implement supply interruption and recovery.
+- [x] Generate automatically at a configurable interval; wait at capacity and refill freed slots.
+- [x] Expose safe status metrics; never expose raw key material.
+- [x] Test capacity limits, empty pool, interruption, recovery, and endpoint synchronization.
+
+Marwan's independent backend is locally verified on 2026-11-07: 16 pool tests
+and four preview API tests passed, including full-pool rejection without replacing
+stored keys and automatic refill only after allocation. See [run instructions](../qkd/README.md).
+Changes await commit; the key panel's browser checks and shared integration
+remain outstanding. These checks do not complete the integrated plan's phases.
 
 **Acceptance criteria:** The pool never exceeds configured capacity; both endpoints receive matching key IDs/material; no key can be consumed when the pool is empty; interruption prevents new generation; recovery allows generation again.
 
