@@ -10,7 +10,8 @@ from urllib.parse import urlsplit
 WEB = Path(__file__).resolve().parent / "web"
 ASSETS = {"/": ("index.html", "text/html; charset=utf-8"),
           "/app.js": ("app.js", "text/javascript; charset=utf-8"),
-          "/style.css": ("style.css", "text/css; charset=utf-8")}
+          "/style.css": ("style.css", "text/css; charset=utf-8"),
+          "/gateway-panel.js": ("gateway-panel.js", "text/javascript; charset=utf-8")}
 ACTIONS = ("reset", "generate_keys", "interrupt_supply", "resume_supply",
            "start_epoch", "end_epoch", "send_reading", "advance_time")
 MAX_STEP_SECONDS = 3600

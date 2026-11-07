@@ -57,6 +57,7 @@ Kareem's gateway status adapter and panel are implemented independently; they ar
 
 ## 4. Update log
 
+- 2026-11-07: The shared page now loads the gateway panel and passes it gateway status; the runner still returns null. An isolated in-process test with the actual sensor and Twin plus a temporary key passed: a verified reading updated the Twin and a modified message did not. Gateway Python tests passed 11/11; the panel test passed 1/1. No browser, key-pool or shared-runner end-to-end test was performed.
 - 2026-11-05: Added an independent gateway status adapter and panel on `kareem`. `python -B -m unittest discover -s tests -p 'test_gateway*.py' -v` passed 10 tests; `node --test tests/test_gateway_panel.mjs` passed 1 test using an actual local backend status snapshot. The shared API, browser integration, and Twin rejection behavior have not been tested end to end.
 - 2026-11-05: Kareem's standalone AES-GCM gateway is implemented on branch `kareem`. With Python 3.12 and cryptography 48.0.1, `python -B -m unittest discover -s tests -p test_gateway_crypto.py -v` passed 6 tests, and `python -B -m gateway.demo` recovered a sample reading and rejected modified ciphertext. These checks do not establish end-to-end integration.
 - 2026-11-05: Python virtual environment and `cryptography` installation reported successful.

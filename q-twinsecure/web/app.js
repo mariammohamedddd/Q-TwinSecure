@@ -1,4 +1,6 @@
 ﻿const connection = document.querySelector('#connection');
+import { renderGatewayPanel } from './gateway-panel.js';
+
 const controls = document.querySelector('#controls');
 const actionError = document.querySelector('#action-error');
 const buttons = [...document.querySelectorAll('[data-action]')];
@@ -22,6 +24,7 @@ function render(status) {
   }
   latestStatus = status;
   online = true;
+  renderGatewayPanel(document.querySelector('#gateway-panel'), status.gateway);
   connection.textContent = 'Local runner connected · Component integration pending';
   connection.dataset.state = 'connected';
   document.querySelector('#clock-status').textContent = `Experiment clock: ${status.clock.elapsed_seconds} seconds (manual; paused between actions)`;
@@ -51,6 +54,7 @@ async function request(path, options = {}) {
 
 function disconnected() {
   online = false;
+  renderGatewayPanel(document.querySelector('#gateway-panel'), null);
   connection.textContent = 'Disconnected · Local runner unavailable. Check the terminal; retrying automatically. Displayed events may be stale.';
   connection.dataset.state = 'disconnected';
   setControls();
