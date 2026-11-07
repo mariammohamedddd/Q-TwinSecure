@@ -1,136 +1,272 @@
-.\venv\Scripts\python.exe : test_advance_and_reset (test_dashboard.DashboardTests.test_advance_and_reset) ... ok
-At line:2 char:1
-+ .\venv\Scripts\python.exe -m unittest discover -s tests -v *> evidenc ...
-+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    + CategoryInfo          : NotSpecified: (test_advance_an...d_reset) ... ok:String) [], RemoteException
-    + FullyQualifiedErrorId : NativeCommandError
- 
-test_component_actions_explicitly_unavailable 
-(test_dashboard.DashboardTests.test_component_actions_explicitly_unavailable) ... ok
-test_invalid_actions_cannot_mutate_state_or_echo_input 
-(test_dashboard.DashboardTests.test_invalid_actions_cannot_mutate_state_or_echo_input) ... ok
-test_loopback_binding (test_dashboard.DashboardTests.test_loopback_binding) ... ok
-test_page_and_assets (test_dashboard.DashboardTests.test_page_and_assets) ... ok
-test_request_validation (test_dashboard.DashboardTests.test_request_validation) ... ok
-test_sensor_uses_experiment_clock_without_claiming_delivery 
-(test_dashboard.DashboardTests.test_sensor_uses_experiment_clock_without_claiming_delivery) ... ok
-test_status_does_not_fabricate_component_results 
-(test_dashboard.DashboardTests.test_status_does_not_fabricate_component_results) ... ok
-test_unknown_paths_cannot_read_project_files 
-(test_dashboard.DashboardTests.test_unknown_paths_cannot_read_project_files) ... ok
-test_clock_total_limit_and_reset_recovery (test_dashboard.RunnerStateTests.test_clock_total_limit_and_reset_recovery) 
-... ok
-test_event_history_bound_and_status_copy (test_dashboard.RunnerStateTests.test_event_history_bound_and_status_copy) 
-... ok
-test_key_pool_epoch_interruption_and_recovery 
-(test_gateway_component_integration.GatewayComponentIntegrationTests.test_key_pool_epoch_interruption_and_recovery) 
-... ok
-test_verified_reading_updates_twin_and_tampering_does_not (test_gateway_component_integration.GatewayComponentIntegrati
-onTests.test_verified_reading_updates_twin_and_tampering_does_not) ... ok
-test_fresh_nonce (test_gateway_crypto.GatewayTests.test_fresh_nonce) ... ok
-test_invalid_key_and_reading_rejected (test_gateway_crypto.GatewayTests.test_invalid_key_and_reading_rejected) ... ok
-test_malformed_envelopes_rejected (test_gateway_crypto.GatewayTests.test_malformed_envelopes_rejected) ... ok
-test_modified_metadata_rejected (test_gateway_crypto.GatewayTests.test_modified_metadata_rejected) ... ok
-test_round_trip (test_gateway_crypto.GatewayTests.test_round_trip) ... ok
-test_tampered_ciphertext_and_nonce (test_gateway_crypto.GatewayTests.test_tampered_ciphertext_and_nonce) ... ok
-test_disconnected_and_overlapping_epochs_rejected 
-(test_gateway_status.GatewayStatusTests.test_disconnected_and_overlapping_epochs_rejected) ... ok
-test_epoch_and_verified_reading (test_gateway_status.GatewayStatusTests.test_epoch_and_verified_reading) ... ok
-test_rejection_never_returns_a_reading (test_gateway_status.GatewayStatusTests.test_rejection_never_returns_a_reading) 
-... ok
-test_status_is_independent_and_contains_no_message_or_key 
-(test_gateway_status.GatewayStatusTests.test_status_is_independent_and_contains_no_message_or_key) ... ok
-test_full_pool_waits_and_refills_only_after_allocation 
-(test_key_panel_demo.KeyPanelDemoTests.test_full_pool_waits_and_refills_only_after_allocation) ... ok
-test_invalid_actions_and_cross_origin_rejected 
-(test_key_panel_demo.KeyPanelDemoTests.test_invalid_actions_and_cross_origin_rejected) ... ok
-test_real_status_normal_interruption_and_recovery 
-(test_key_panel_demo.KeyPanelDemoTests.test_real_status_normal_interruption_and_recovery) ... ok
-test_static_files_and_unknown_paths (test_key_panel_demo.KeyPanelDemoTests.test_static_files_and_unknown_paths) ... ok
-test_close_stops_worker_while_waiting_paused_or_full 
-(test_key_pool.AutomaticSupplyTests.test_close_stops_worker_while_waiting_paused_or_full) ... ok
-test_concurrent_allocations_keep_ids_and_counters_consistent 
-(test_key_pool.AutomaticSupplyTests.test_concurrent_allocations_keep_ids_and_counters_consistent) ... ok
-test_fills_and_refills_without_generation_calls 
-(test_key_pool.AutomaticSupplyTests.test_fills_and_refills_without_generation_calls) ... ok
-test_generation_waits_for_configured_interval 
-(test_key_pool.AutomaticSupplyTests.test_generation_waits_for_configured_interval) ... ok
-test_interruption_and_automatic_recovery (test_key_pool.AutomaticSupplyTests.test_interruption_and_automatic_recovery) 
-... ok
-test_invalid_automatic_configuration (test_key_pool.AutomaticSupplyTests.test_invalid_automatic_configuration) ... ok
-test_capacity_and_refill (test_key_pool.KeyPoolTests.test_capacity_and_refill) ... ok
-test_full_pool_rejects_additions_without_displacing_records 
-(test_key_pool.KeyPoolTests.test_full_pool_rejects_additions_without_displacing_records) ... ok
-test_generation_uses_secrets_and_only_free_slots 
-(test_key_pool.KeyPoolTests.test_generation_uses_secrets_and_only_free_slots) ... ok
-test_initial_state_and_empty_consumption (test_key_pool.KeyPoolTests.test_initial_state_and_empty_consumption) ... ok
-test_interruption_preserves_queued_and_allocated_keys 
-(test_key_pool.KeyPoolTests.test_interruption_preserves_queued_and_allocated_keys) ... ok
-test_manual_mode_recovery (test_key_pool.KeyPoolTests.test_manual_mode_recovery) ... ok
-test_matching_32_byte_material_and_unique_fifo_ids 
-(test_key_pool.KeyPoolTests.test_matching_32_byte_material_and_unique_fifo_ids) ... ok
-test_separate_pools_and_repeated_cycles (test_key_pool.KeyPoolTests.test_separate_pools_and_repeated_cycles) ... ok
-test_status_is_safe_and_cannot_mutate_pool (test_key_pool.KeyPoolTests.test_status_is_safe_and_cannot_mutate_pool) ... 
-ok
-test_zero_count_and_invalid_arguments (test_key_pool.KeyPoolTests.test_zero_count_and_invalid_arguments) ... ok
-test_default_clock_is_aware (test_sensor.SensorTests.test_default_clock_is_aware) ... ok
-test_equal_range (test_sensor.SensorTests.test_equal_range) ... ok
-test_injected_clock_advances (test_sensor.SensorTests.test_injected_clock_advances) ... ok
-test_invalid_clock_preserves_state (test_sensor.SensorTests.test_invalid_clock_preserves_state) ... ok
-test_invalid_configuration (test_sensor.SensorTests.test_invalid_configuration) ... ok
-test_invalid_count (test_sensor.SensorTests.test_invalid_count) ... ok
-test_reading_contract_and_serialization (test_sensor.SensorTests.test_reading_contract_and_serialization) ... ok
-test_seeded_range_and_stable_id (test_sensor.SensorTests.test_seeded_range_and_stable_id) ... ok
-test_sequence_cycles_and_zero_count (test_sensor.SensorTests.test_sequence_cycles_and_zero_count) ... ok
-test_status_is_defensive_and_does_not_generate 
-(test_sensor.SensorTests.test_status_is_defensive_and_does_not_generate) ... ok
-test_page_and_assets (test_sensor_dashboard.DashboardTests.test_page_and_assets) ... 127.0.0.1 - - [07/Nov/2026 
-21:32:44] "GET / HTTP/1.1" 200 -
-127.0.0.1 - - [07/Nov/2026 21:32:44] "GET /sensor-panel.js HTTP/1.1" 200 -
-127.0.0.1 - - [07/Nov/2026 21:32:44] "GET /sensor-panel.css HTTP/1.1" 200 -
-ok
-test_status_matches_actual_sensor_and_does_not_oversample 
-(test_sensor_dashboard.DashboardTests.test_status_matches_actual_sensor_and_does_not_oversample) ... 127.0.0.1 - - 
-[07/Nov/2026 21:32:44] "GET /api/status HTTP/1.1" 200 -
-127.0.0.1 - - [07/Nov/2026 21:32:44] "GET /api/status HTTP/1.1" 200 -
-ok
-test_unknown_paths_cannot_read_project_files 
-(test_sensor_dashboard.DashboardTests.test_unknown_paths_cannot_read_project_files) ... 127.0.0.1 - - [07/Nov/2026 
-21:32:45] code 404, message Not Found
-127.0.0.1 - - [07/Nov/2026 21:32:45] "GET /../main.py HTTP/1.1" 404 -
-127.0.0.1 - - [07/Nov/2026 21:32:45] code 404, message Not Found
-127.0.0.1 - - [07/Nov/2026 21:32:45] "GET /main.py HTTP/1.1" 404 -
-127.0.0.1 - - [07/Nov/2026 21:32:45] code 404, message Not Found
-127.0.0.1 - - [07/Nov/2026 21:32:45] "GET /api/actions HTTP/1.1" 404 -
-ok
-test_authenticated_but_invalid_reading_is_not_accepted 
-(test_twin_integration.IntegratedTwinTests.test_authenticated_but_invalid_reading_is_not_accepted) ... ok
-test_custom_thresholds_survive_runner_reset 
-(test_twin_integration.IntegratedTwinTests.test_custom_thresholds_survive_runner_reset) ... ok
-test_http_actions_expose_actual_twin_and_manual_clock 
-(test_twin_integration.IntegratedTwinTests.test_http_actions_expose_actual_twin_and_manual_clock) ... ok
-test_normal_interruption_and_recovery 
-(test_twin_integration.IntegratedTwinTests.test_normal_interruption_and_recovery) ... ok
-test_reset_drops_observation_counts_epoch_and_old_worker 
-(test_twin_integration.IntegratedTwinTests.test_reset_drops_observation_counts_epoch_and_old_worker) ... ok
-test_status_does_not_consume_keys_or_advance_time_or_leak_material 
-(test_twin_integration.IntegratedTwinTests.test_status_does_not_consume_keys_or_advance_time_or_leak_material) ... ok
-test_tampering_rejects_without_twin_or_delivery_update 
-(test_twin_integration.IntegratedTwinTests.test_tampering_rejects_without_twin_or_delivery_update) ... ok
-test_custom_thresholds (test_twin_monitor.TwinMonitorTests.test_custom_thresholds) ... ok
-test_invalid_clock_values (test_twin_monitor.TwinMonitorTests.test_invalid_clock_values) ... ok
-test_invalid_configuration (test_twin_monitor.TwinMonitorTests.test_invalid_configuration) ... ok
-test_invalid_readings_preserve_previous_status 
-(test_twin_monitor.TwinMonitorTests.test_invalid_readings_preserve_previous_status) ... ok
-test_no_reading (test_twin_monitor.TwinMonitorTests.test_no_reading) ... ok
-test_observation_age_includes_delivery_delay 
-(test_twin_monitor.TwinMonitorTests.test_observation_age_includes_delivery_delay) ... ok
-test_recovery_and_input_snapshot (test_twin_monitor.TwinMonitorTests.test_recovery_and_input_snapshot) ... ok
-test_timezone_offsets_and_z (test_twin_monitor.TwinMonitorTests.test_timezone_offsets_and_z) ... ok
-test_transitions_and_boundaries (test_twin_monitor.TwinMonitorTests.test_transitions_and_boundaries) ... ok
-test_live_backend_updates_are_exposed (test_twin_preview.PreviewTests.test_live_backend_updates_are_exposed) ... ok
-
-----------------------------------------------------------------------
-Ran 73 tests in 6.887s
-
-OK
+.\venv\Scripts\python.exe : test_advance_and_reset (test_dashboard.DashboardTests.test_advance_and_reset) ... ok
+
+At line:2 char:1
+
++ .\venv\Scripts\python.exe -m unittest discover -s tests -v *> evidenc ...
+
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    + CategoryInfo          : NotSpecified: (test_advance_an...d_reset) ... ok:String) [], RemoteException
+
+    + FullyQualifiedErrorId : NativeCommandError
+
+
+
+test_component_actions_explicitly_unavailable
+
+(test_dashboard.DashboardTests.test_component_actions_explicitly_unavailable) ... ok
+
+test_invalid_actions_cannot_mutate_state_or_echo_input
+
+(test_dashboard.DashboardTests.test_invalid_actions_cannot_mutate_state_or_echo_input) ... ok
+
+test_loopback_binding (test_dashboard.DashboardTests.test_loopback_binding) ... ok
+
+test_page_and_assets (test_dashboard.DashboardTests.test_page_and_assets) ... ok
+
+test_request_validation (test_dashboard.DashboardTests.test_request_validation) ... ok
+
+test_sensor_uses_experiment_clock_without_claiming_delivery
+
+(test_dashboard.DashboardTests.test_sensor_uses_experiment_clock_without_claiming_delivery) ... ok
+
+test_status_does_not_fabricate_component_results
+
+(test_dashboard.DashboardTests.test_status_does_not_fabricate_component_results) ... ok
+
+test_unknown_paths_cannot_read_project_files
+
+(test_dashboard.DashboardTests.test_unknown_paths_cannot_read_project_files) ... ok
+
+test_clock_total_limit_and_reset_recovery (test_dashboard.RunnerStateTests.test_clock_total_limit_and_reset_recovery)
+
+... ok
+
+test_event_history_bound_and_status_copy (test_dashboard.RunnerStateTests.test_event_history_bound_and_status_copy)
+
+... ok
+
+test_key_pool_epoch_interruption_and_recovery
+
+(test_gateway_component_integration.GatewayComponentIntegrationTests.test_key_pool_epoch_interruption_and_recovery)
+
+... ok
+
+test_verified_reading_updates_twin_and_tampering_does_not (test_gateway_component_integration.GatewayComponentIntegrati
+
+onTests.test_verified_reading_updates_twin_and_tampering_does_not) ... ok
+
+test_fresh_nonce (test_gateway_crypto.GatewayTests.test_fresh_nonce) ... ok
+
+test_invalid_key_and_reading_rejected (test_gateway_crypto.GatewayTests.test_invalid_key_and_reading_rejected) ... ok
+
+test_malformed_envelopes_rejected (test_gateway_crypto.GatewayTests.test_malformed_envelopes_rejected) ... ok
+
+test_modified_metadata_rejected (test_gateway_crypto.GatewayTests.test_modified_metadata_rejected) ... ok
+
+test_round_trip (test_gateway_crypto.GatewayTests.test_round_trip) ... ok
+
+test_tampered_ciphertext_and_nonce (test_gateway_crypto.GatewayTests.test_tampered_ciphertext_and_nonce) ... ok
+
+test_disconnected_and_overlapping_epochs_rejected
+
+(test_gateway_status.GatewayStatusTests.test_disconnected_and_overlapping_epochs_rejected) ... ok
+
+test_epoch_and_verified_reading (test_gateway_status.GatewayStatusTests.test_epoch_and_verified_reading) ... ok
+
+test_rejection_never_returns_a_reading (test_gateway_status.GatewayStatusTests.test_rejection_never_returns_a_reading)
+
+... ok
+
+test_status_is_independent_and_contains_no_message_or_key
+
+(test_gateway_status.GatewayStatusTests.test_status_is_independent_and_contains_no_message_or_key) ... ok
+
+test_full_pool_waits_and_refills_only_after_allocation
+
+(test_key_panel_demo.KeyPanelDemoTests.test_full_pool_waits_and_refills_only_after_allocation) ... ok
+
+test_invalid_actions_and_cross_origin_rejected
+
+(test_key_panel_demo.KeyPanelDemoTests.test_invalid_actions_and_cross_origin_rejected) ... ok
+
+test_real_status_normal_interruption_and_recovery
+
+(test_key_panel_demo.KeyPanelDemoTests.test_real_status_normal_interruption_and_recovery) ... ok
+
+test_static_files_and_unknown_paths (test_key_panel_demo.KeyPanelDemoTests.test_static_files_and_unknown_paths) ... ok
+
+test_close_stops_worker_while_waiting_paused_or_full
+
+(test_key_pool.AutomaticSupplyTests.test_close_stops_worker_while_waiting_paused_or_full) ... ok
+
+test_concurrent_allocations_keep_ids_and_counters_consistent
+
+(test_key_pool.AutomaticSupplyTests.test_concurrent_allocations_keep_ids_and_counters_consistent) ... ok
+
+test_fills_and_refills_without_generation_calls
+
+(test_key_pool.AutomaticSupplyTests.test_fills_and_refills_without_generation_calls) ... ok
+
+test_generation_waits_for_configured_interval
+
+(test_key_pool.AutomaticSupplyTests.test_generation_waits_for_configured_interval) ... ok
+
+test_interruption_and_automatic_recovery (test_key_pool.AutomaticSupplyTests.test_interruption_and_automatic_recovery)
+
+... ok
+
+test_invalid_automatic_configuration (test_key_pool.AutomaticSupplyTests.test_invalid_automatic_configuration) ... ok
+
+test_capacity_and_refill (test_key_pool.KeyPoolTests.test_capacity_and_refill) ... ok
+
+test_full_pool_rejects_additions_without_displacing_records
+
+(test_key_pool.KeyPoolTests.test_full_pool_rejects_additions_without_displacing_records) ... ok
+
+test_generation_uses_secrets_and_only_free_slots
+
+(test_key_pool.KeyPoolTests.test_generation_uses_secrets_and_only_free_slots) ... ok
+
+test_initial_state_and_empty_consumption (test_key_pool.KeyPoolTests.test_initial_state_and_empty_consumption) ... ok
+
+test_interruption_preserves_queued_and_allocated_keys
+
+(test_key_pool.KeyPoolTests.test_interruption_preserves_queued_and_allocated_keys) ... ok
+
+test_manual_mode_recovery (test_key_pool.KeyPoolTests.test_manual_mode_recovery) ... ok
+
+test_matching_32_byte_material_and_unique_fifo_ids
+
+(test_key_pool.KeyPoolTests.test_matching_32_byte_material_and_unique_fifo_ids) ... ok
+
+test_separate_pools_and_repeated_cycles (test_key_pool.KeyPoolTests.test_separate_pools_and_repeated_cycles) ... ok
+
+test_status_is_safe_and_cannot_mutate_pool (test_key_pool.KeyPoolTests.test_status_is_safe_and_cannot_mutate_pool) ...
+
+ok
+
+test_zero_count_and_invalid_arguments (test_key_pool.KeyPoolTests.test_zero_count_and_invalid_arguments) ... ok
+
+test_default_clock_is_aware (test_sensor.SensorTests.test_default_clock_is_aware) ... ok
+
+test_equal_range (test_sensor.SensorTests.test_equal_range) ... ok
+
+test_injected_clock_advances (test_sensor.SensorTests.test_injected_clock_advances) ... ok
+
+test_invalid_clock_preserves_state (test_sensor.SensorTests.test_invalid_clock_preserves_state) ... ok
+
+test_invalid_configuration (test_sensor.SensorTests.test_invalid_configuration) ... ok
+
+test_invalid_count (test_sensor.SensorTests.test_invalid_count) ... ok
+
+test_reading_contract_and_serialization (test_sensor.SensorTests.test_reading_contract_and_serialization) ... ok
+
+test_seeded_range_and_stable_id (test_sensor.SensorTests.test_seeded_range_and_stable_id) ... ok
+
+test_sequence_cycles_and_zero_count (test_sensor.SensorTests.test_sequence_cycles_and_zero_count) ... ok
+
+test_status_is_defensive_and_does_not_generate
+
+(test_sensor.SensorTests.test_status_is_defensive_and_does_not_generate) ... ok
+
+test_page_and_assets (test_sensor_dashboard.DashboardTests.test_page_and_assets) ... 127.0.0.1 - - [07/Nov/2026
+
+21:32:44] "GET / HTTP/1.1" 200 -
+
+127.0.0.1 - - [07/Nov/2026 21:32:44] "GET /sensor-panel.js HTTP/1.1" 200 -
+
+127.0.0.1 - - [07/Nov/2026 21:32:44] "GET /sensor-panel.css HTTP/1.1" 200 -
+
+ok
+
+test_status_matches_actual_sensor_and_does_not_oversample
+
+(test_sensor_dashboard.DashboardTests.test_status_matches_actual_sensor_and_does_not_oversample) ... 127.0.0.1 - -
+
+[07/Nov/2026 21:32:44] "GET /api/status HTTP/1.1" 200 -
+
+127.0.0.1 - - [07/Nov/2026 21:32:44] "GET /api/status HTTP/1.1" 200 -
+
+ok
+
+test_unknown_paths_cannot_read_project_files
+
+(test_sensor_dashboard.DashboardTests.test_unknown_paths_cannot_read_project_files) ... 127.0.0.1 - - [07/Nov/2026
+
+21:32:45] code 404, message Not Found
+
+127.0.0.1 - - [07/Nov/2026 21:32:45] "GET /../main.py HTTP/1.1" 404 -
+
+127.0.0.1 - - [07/Nov/2026 21:32:45] code 404, message Not Found
+
+127.0.0.1 - - [07/Nov/2026 21:32:45] "GET /main.py HTTP/1.1" 404 -
+
+127.0.0.1 - - [07/Nov/2026 21:32:45] code 404, message Not Found
+
+127.0.0.1 - - [07/Nov/2026 21:32:45] "GET /api/actions HTTP/1.1" 404 -
+
+ok
+
+test_authenticated_but_invalid_reading_is_not_accepted
+
+(test_twin_integration.IntegratedTwinTests.test_authenticated_but_invalid_reading_is_not_accepted) ... ok
+
+test_custom_thresholds_survive_runner_reset
+
+(test_twin_integration.IntegratedTwinTests.test_custom_thresholds_survive_runner_reset) ... ok
+
+test_http_actions_expose_actual_twin_and_manual_clock
+
+(test_twin_integration.IntegratedTwinTests.test_http_actions_expose_actual_twin_and_manual_clock) ... ok
+
+test_normal_interruption_and_recovery
+
+(test_twin_integration.IntegratedTwinTests.test_normal_interruption_and_recovery) ... ok
+
+test_reset_drops_observation_counts_epoch_and_old_worker
+
+(test_twin_integration.IntegratedTwinTests.test_reset_drops_observation_counts_epoch_and_old_worker) ... ok
+
+test_status_does_not_consume_keys_or_advance_time_or_leak_material
+
+(test_twin_integration.IntegratedTwinTests.test_status_does_not_consume_keys_or_advance_time_or_leak_material) ... ok
+
+test_tampering_rejects_without_twin_or_delivery_update
+
+(test_twin_integration.IntegratedTwinTests.test_tampering_rejects_without_twin_or_delivery_update) ... ok
+
+test_custom_thresholds (test_twin_monitor.TwinMonitorTests.test_custom_thresholds) ... ok
+
+test_invalid_clock_values (test_twin_monitor.TwinMonitorTests.test_invalid_clock_values) ... ok
+
+test_invalid_configuration (test_twin_monitor.TwinMonitorTests.test_invalid_configuration) ... ok
+
+test_invalid_readings_preserve_previous_status
+
+(test_twin_monitor.TwinMonitorTests.test_invalid_readings_preserve_previous_status) ... ok
+
+test_no_reading (test_twin_monitor.TwinMonitorTests.test_no_reading) ... ok
+
+test_observation_age_includes_delivery_delay
+
+(test_twin_monitor.TwinMonitorTests.test_observation_age_includes_delivery_delay) ... ok
+
+test_recovery_and_input_snapshot (test_twin_monitor.TwinMonitorTests.test_recovery_and_input_snapshot) ... ok
+
+test_timezone_offsets_and_z (test_twin_monitor.TwinMonitorTests.test_timezone_offsets_and_z) ... ok
+
+test_transitions_and_boundaries (test_twin_monitor.TwinMonitorTests.test_transitions_and_boundaries) ... ok
+
+test_live_backend_updates_are_exposed (test_twin_preview.PreviewTests.test_live_backend_updates_are_exposed) ... ok
+
+
+
+----------------------------------------------------------------------
+
+Ran 73 tests in 6.887s
+
+
+
+OK
+
