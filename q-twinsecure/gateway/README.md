@@ -29,4 +29,4 @@ To check the real sensor, gateway and Twin together with a disposable in-memory 
 python -B -m unittest discover -s tests -p test_gateway_component_integration.py -v
 ```
 
-This isolated test is not evidence that the shared runner or end-to-end scenario works.
+The isolated tests also exercise the actual `QKDKeyPool` with automatic generation disabled: allocate matching endpoint keys, send multiple readings during interrupted supply, observe an empty pool after closing the epoch, and allocate a fresh key after recovery. This is not evidence that the shared runner, dashboard, or complete timed end-to-end scenario works.
