@@ -31,11 +31,13 @@ Build the smallest complete demonstration first. Do not add advanced features un
 
 ## Phase 2 — Sensor simulator
 
-- [ ] Create a CO₂ reading model with value, sensor ID, and timestamp.
-- [ ] Generate repeatable readings.
-- [ ] Test timestamp and reading serialization.
+- [x] Create a CO₂ reading model with value, sensor ID, and timestamp.
+- [x] Generate repeatable readings.
+- [x] Test timestamp and reading serialization.
 
 **Acceptance criteria:** The simulator produces valid timestamped readings without requiring hardware.
+
+Local verification on 2026-11-05: 10 sensor tests passed and the independent demo printed five shared-contract readings using Python 3.14. See `sensor/README.md`. Reusable sensor dashboard panel and standalone Python-backed preview are now saved. Follow-up validation passed 13 Python tests and four JavaScript check groups. Browser visual verification and connection to Nancy's shared runner remain pending; no shared integration is claimed.
 
 ## Phase 3 — Secure message / gateway
 
@@ -50,6 +52,12 @@ Build the smallest complete demonstration first. Do not add advanced features un
 **Acceptance criteria:** A valid protected reading decrypts correctly; a modified message fails authentication; nonce reuse under the same key is prevented by design.
 
 ## Phase 4 — Twin receiver and freshness
+
+Mariam Wael component update (2026-11-05): monitor, configurable thresholds,
+status snapshot, terminal demo and owner panel implemented locally. Ten Python
+tests and one JavaScript DOM-harness test passed. Run instructions and panel
+handoff are in `MARIAM_WAEL.md`. Shared dashboard integration and authenticated
+pipeline checks remain pending; component review is next. Prepared for component review.
 
 - [ ] Accept only successfully authenticated readings.
 - [ ] Store the latest valid reading and receive timestamp.
