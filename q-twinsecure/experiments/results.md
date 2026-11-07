@@ -92,3 +92,19 @@ Browser visual acceptance, console/network inspection in an actual browser, scre
 ## Latest combined merge — 2026-11-07
 
 After merging both Mariam contributions: `py -B -m unittest discover -s tests -v` passed 76 tests. With PYTHON=py, Node gateway/sensor/sensor-shared/Twin/Twin-app tests passed 7 test entries. app.js syntax passed. Checks initially exposed Python-launcher portability and Windows unread-body rejection resets; both were fixed and the combined rerun passed. Shared sensor/Twin DOM tests use real runner snapshots; assembled-browser visual review remains pending. Owner evidence files are retained as historical results, not relabelled as this run.
+
+## Dashboard redesign checks — 2026-11-07
+
+7 JavaScript test entries and 9 shared HTTP tests passed. app.js/key-panel.js syntax passed. Headless Chrome initial dashboard screenshots reviewed at desktop 1560px and narrow 600px widths. Controls-anchor capture was blank; no lower-page visual or interactive browser acceptance is claimed. Temporary local server stopped. Full presenter review remains pending.
+
+## Full automatic-mode verification — 2026-11-07
+
+85 Python tests passed, including 9 automatic/background tests. Seven Node entries passed after fixing the live-clock label. Screenshot evidence: evidence/automatic-controls.png and evidence/automatic-twin-delayed.png. Real live preview: elapsed 23.15→24.40 seconds, delivered=12, consumed epoch pairs=3, CURRENT; after stopping monitoring, age=7.9 seconds and DELAYED, with browser displaying 8.5 seconds. Automatic exhaustion→DELAYED→MISSING→resumption was also verified using real workers with shortened test intervals. Manual API scenario tests remain passing. Browser snapshots do not establish full interactive/mobile acceptance.
+
+## Guided presentation verification — 2026-11-07
+
+Full suite: 89 Python tests passed. Six Node files: 8 test entries passed. Presentation tests observed every stage using actual pool, gateway and Twin status, including rejection count=1, no deliveries during stale gap, and exactly two consumed pairs after recovery. Replay starts a new run with one scheduler. Default-speed live status at 24.1 seconds showed INTERRUPTED_ACTIVE, delivered=9, rejected=1, CURRENT; the ensuing browser capture showed NO_KEY/disconnected with observation age 3.7 seconds. Evidence: guided-presentation.png. No fake status is used; final mobile/presenter rehearsal remains pending.
+
+## Manual-mode browser regression — 2026-11-07
+
+Full suite: 89 Python tests, 8 Node entries and app.js syntax passed. Real headless Chrome CDP test passed 9 initial check groups, plus actual offline detection/disabled controls and automatic reconnection after restart. Backend counts in the browser-driven sequence: delivered 2/consumed 1 under normal operation, delivered 3/consumed 1 after interruption, DELAYED at manual age 6s, MISSING at 16s with delivery unchanged, recovery delivered 4/consumed 2 with a new epoch. Factory reset cleared state. 390px viewport fit without document overflow and generated a key through the real UI. Screenshot evidence/manual-browser-mobile.png inspected. These results are local browser verification, not an absolute guarantee for every environment.

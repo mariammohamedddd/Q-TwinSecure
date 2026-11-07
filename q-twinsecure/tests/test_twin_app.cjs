@@ -40,7 +40,24 @@ finally:s.close()
   assert.deepEqual(calls[0],snapshot.twin);
   assert.match(elements.get('#scenario-status').textContent,/Delivered: 1/);
   assert.equal(calls[0].value_ppm,snapshot.sensor.value_ppm);
+  assert.equal(elements.get('#metric-delivered').textContent, '1');
+  assert.equal(elements.get('#metric-freshness').textContent, 'CURRENT');
+  assert.equal(elements.get('#metric-connection').textContent, 'Connected');
   offline=true; await poll();
   assert.equal(disconnected,1);
+  assert.equal(elements.get('#metric-delivered').textContent, '—');
   assert.equal(elements.get('#controls').disabled,true);
+  // Reconnection also updates the operating mode and real-time labels.
+  snapshot.monitoring = { mode: 'automatic', running: true,
+    reading_interval_seconds: 2, epoch_duration_seconds: 10,
+    epoch_remaining_seconds: 8.5, error: null };
+  snapshot.clock.mode = 'realtime';
+  snapshot.clock.elapsed_seconds = 1.5;
+  snapshot.key_supply_mode = 'automatic';
+  offline = false;
+  await poll();
+  assert.equal(document.body.dataset.mode, 'automatic');
+  assert.match(elements.get('#clock-status').textContent, /Live clock: 1.5 seconds/);
+  assert.match(elements.get('#monitoring-status').textContent, /Automatic monitoring active/);
+  assert.match(elements.get('#action-help').textContent, /run automatically/);
 });

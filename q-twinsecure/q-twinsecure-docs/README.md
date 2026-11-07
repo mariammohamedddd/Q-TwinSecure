@@ -123,3 +123,20 @@ Before implementing a task:
 7. Record important design changes in `DECISIONS.md`.
 
 Never mark something as implemented merely because code was drafted or generated. It is implemented only after it exists in the repository and has been run or tested successfully.
+
+## Full automatic mode
+
+Stop any older server, then from q-twinsecure run `py -B main.py --automatic`.
+The existing `--automatic-key-supply` flag now starts the same complete mode.
+Keys, real-time observation aging, scheduled readings, epoch renewal and recovery
+run in the background. See [automatic-mode guide](../experiments/automatic_mode.md)
+for settings and interruption/recovery instructions. Run without a flag for the
+manual demonstration. Refresh the browser with Ctrl+F5 after updating.
+
+## Committee presentation mode
+
+Run `py -B main.py --presentation` from q-twinsecure to walk through the agreed
+success/failure/recovery scenarios automatically. Open the dashboard and click
+Replay all scenarios to start from the beginning when the audience is ready.
+See [presentation guide](../experiments/presentation_mode.md). --automatic remains
+continuous monitoring; no flag retains manual demonstration controls.

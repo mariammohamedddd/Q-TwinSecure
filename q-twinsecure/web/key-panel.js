@@ -1,5 +1,5 @@
 /** Render only safe QKDKeyPool.get_status() fields. The shared app owns fetching. */
-export function renderKeyPanel(container, status, { state = "ready" } = {}) {
+export function renderKeyPanel(container, status, { state = "ready", mode = "automatic" } = {}) {
   const doc = container.ownerDocument;
   const panel = doc.createElement("section");
   panel.className = "qts-key-panel";
@@ -87,8 +87,8 @@ export function renderKeyPanel(container, status, { state = "ready" } = {}) {
       ? "Both pools are full. No additional keys are accepted until allocation frees a slot."
       : status.keys_available === 0
       ? (status.supply_enabled
-        ? "Pool empty. Waiting for automatic key supply before a new connection epoch."
-        : "Pool empty. Resume supply to replenish keys automatically.")
+        ? (mode === "presentation" ? "The guided sequence manages generation and recovery." : mode === "manual" ? "Pool empty. Generate keys using the experiment controls." : "Pool empty. Waiting for automatic key supply before a new connection epoch.")
+        : (mode === "presentation" ? "Supply is interrupted for the scenario; recovery will resume automatically." : mode === "manual" ? "Pool empty. Resume supply, then generate keys." : "Pool empty. Resume supply to replenish keys automatically."))
       : "Queued keys are available for new connection epochs.");
     add("p", "Interrupting supply stops generation. Existing connection epochs remain usable.",
       "qts-key-subtitle");

@@ -74,3 +74,15 @@ remain pending; this entry does not claim team-wide phase approval.
 - **Decision:** Integrate Marwan's pool using its existing manual mode (`auto_generate=False`), a shared manual UTC experiment clock, and a fixed sensor sequence. Keep owner standalone previews unchanged.
 - **Rationale:** Nancy's authorized integration needs reproducible key counts and freshness transitions controlled by the presenter. This uses existing interfaces without modifying owner internals.
 - **Consequences:** Generate keys explicitly after resume; wall-clock waiting does not age observations. Use Advance time for freshness transitions. Default demo thresholds are 5/15 seconds and pool capacity is 10 pairs. Team/browser review remains pending.
+
+## D-008 — Full automatic operating mode
+- **Date:** 2026-11-07
+- **Decision:** At the user's explicit request, automatic mode runs key supply, background sensor delivery, epoch renewal/retry and real elapsed freshness. The existing --automatic-key-supply CLI flag aliases --automatic. Preserve manual mode for deterministic tests.
+- **Rationale:** An operational dashboard must age observations and deliver readings without button presses or browser-driven ticks.
+- **Consequences:** Epoch lifetime defaults to 10 seconds with multiple readings per allocation; default automatic pool capacity is 3. Interruption alone preserves active/buffered allocations. Stop/start monitoring are presenter overrides; manual time controls do not apply in automatic mode. This supersedes manual-only operating descriptions, not the underlying lifecycle or PoC scope.
+
+## D-009 — Presentation walkthrough distinct from continuous monitoring
+- **Date:** 2026-11-07
+- **Decision:** At the user's request, provide --presentation to automatically exercise the agreed success, tampering, supply-interruption, new-epoch failure, stale-data and recovery scenarios. Keep --automatic for healthy continuous operation.
+- **Rationale:** A committee demonstration must expose failure/recovery states without requiring manual orchestration or pretending healthy monitoring naturally exercises every scenario.
+- **Consequences:** Presentation fixes a one-pair real pool and explicitly orchestrates supply/epoch actions. Freshness still uses real time and crypto rejection remains real. The scripted epoch closure supersedes continuous renewal only in presentation mode. Replay is available; controls cannot interfere mid-sequence. Verified outcomes and limitations are visible.

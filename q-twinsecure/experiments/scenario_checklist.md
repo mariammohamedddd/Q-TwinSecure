@@ -59,3 +59,13 @@ HTTP integration and isolated panel tests do not establish visual/browser accept
 Open http://127.0.0.1:8000/twin for Mariam Wael's full-screen factory view using the same backend. Manual keys and manual observation time remain default. Optional automatic key supply: `py -B main.py --automatic-key-supply`. Optional thresholds: `--current-threshold 5 --missing-threshold 15`; reset preserves them. The dashboard also shows rejected-reading counts.
 
 Current full checks add `tests/test_sensor_shared.mjs` and `tests/test_twin_app.cjs` to the Node command above. Expected current result: 76 Python tests and 7 Node test entries passed. Browser review must include both / and /twin.
+
+The shared dashboard now has a navigation rail and API-backed overview cards. After restarting the server, hard-refresh (Ctrl+F5) to load the new stylesheet. Existing action sequence is unchanged. Review the overview, pipeline, controls and activity stream, and verify /twin remains usable. New overview values must become unavailable when disconnected.
+
+## Automatic operation
+
+For monitoring without manual sampling/time steps, see [automatic_mode.md](automatic_mode.md). Run `py -B main.py --automatic` (or the existing --automatic-key-supply command). It starts full real-time operation. The manual presenter sequence above remains available when running without either flag.
+
+## Present all scenarios automatically
+
+Use `py -B main.py --presentation` for the committee walkthrough. Read [presentation_mode.md](presentation_mode.md). The automatic-mode guide above describes continuous monitoring; presentation mode deliberately exercises failures and recovery and is now the recommended presentation command.

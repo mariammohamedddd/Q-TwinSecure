@@ -3,48 +3,69 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Q-TwinSecure | Local experiment</title>
+  <meta name="theme-color" content="#102d38">
+  <title>Q-TwinSecure | Monitoring workspace</title>
   <link rel="stylesheet" href="/style.css">
   <link rel="stylesheet" href="/twin-panel.css">
   <script type="module" src="/app.js"></script>
 </head>
-<body>
-  <header><span class="eyebrow">INDUSTRIAL MONITORING / 10% PROOF OF CONCEPT</span>
-    <h1>Q-TwinSecure</h1><p>Key availability → protected connection → observation delivery → Twin freshness</p>
-    <p id="connection" role="status" aria-live="polite">Loading local runner…</p>
-  </header>
-  <main>
-    <aside><strong>Phase 3 · Integrated local demonstration</strong><p>Software-emulated QKD key supply uses classical randomness. Direct AES-GCM is a PoC simplification. One key pair protects an epoch with multiple readings. Keys and experiment time advance only through the controls.</p></aside>
-    <section aria-labelledby="pipeline-title"><h2 id="pipeline-title">Monitoring pipeline</h2>
-      <div class="grid">
-        <article id="key-panel"><span class="eyebrow">01 / MARWAN</span><h3>Key supply</h3><p class="empty">Not connected</p><p>Supply state and key counts await backend integration.</p></article>
-        <article id="sensor-panel"><co2-sensor-panel></co2-sensor-panel></article>
-        <article id="gateway-panel"><span class="eyebrow">03 / KAREEM</span><h3>Protected gateway</h3><p class="empty">Not connected</p><p>Epoch and verification state await backend integration.</p></article>
-        <article id="twin-panel"><span class="eyebrow">04 / MARIAM WAEL</span><h3>Digital Twin</h3><p class="empty">No accepted observation</p><p>Age and freshness await backend integration.</p></article>
+<body class="dashboard">
+  <a class="skip-link" href="#workspace">Skip to monitoring workspace</a>
+  <aside class="sidebar" aria-label="Workspace navigation">
+    <a class="brand" href="/" aria-label="Q-TwinSecure home"><span class="brand-mark">Q<span>·</span></span><span>Q-Twin<span class="brand-light">Secure</span><small>SECURE MONITORING</small></span></a>
+    <div class="nav-caption">WORKSPACE</div>
+    <nav>
+      <a class="nav-active" href="#workspace" aria-current="page"><span aria-hidden="true">◈</span> Overview</a>
+      <a href="#pipeline-title"><span aria-hidden="true">⌁</span> Monitoring pipeline</a>
+      <a href="#experiment"><span aria-hidden="true">⊞</span> Experiment controls</a>
+      <a href="#activity"><span aria-hidden="true">≡</span> Activity log</a>
+      <a href="/twin"><span aria-hidden="true">↗</span> Factory view</a>
+    </nav>
+    <div class="sidebar-note"><span class="status-dot"></span> LOCAL DEMONSTRATION<p>A small experiment.<br>A connected view.</p><small>Software-emulated key supply<br>Direct AES-GCM protection</small></div>
+    <div class="sidebar-foot">Q-TWINSECURE <span>PoC / 01</span></div>
+  </aside>
+  <div class="workspace-shell">
+    <header class="topbar"><div class="breadcrumb">Workspace <span>/</span> <strong>Overview</strong></div><div class="environment"><span class="status-dot"></span> Local environment <span class="environment-tag">RESEARCH PoC</span></div></header>
+    <main id="workspace" tabindex="-1">
+      <section id="presentation-banner" class="presentation-banner" aria-labelledby="presentation-title" hidden>
+        <div class="presentation-heading"><span id="presentation-progress" class="eyebrow">GUIDED PRESENTATION</span><button type="button" data-action="replay_presentation" data-presentation-only>↻ Replay all scenarios</button></div>
+        <h2 id="presentation-title">Preparing demonstration…</h2>
+        <p id="presentation-description">The real backend will run each scenario in sequence.</p>
+        <progress id="presentation-progress-bar" max="9" value="0" aria-label="Presentation progress"></progress>
+        <ol id="presentation-steps" class="presentation-steps" aria-label="Scenario sequence"></ol>
+        <details><summary>Verified outcomes</summary><ol id="presentation-results"></ol></details>
+      </section>
+      <section class="page-heading" aria-labelledby="page-title"><div><span class="eyebrow">MONITOR. VERIFY. UNDERSTAND.</span><h1 id="page-title">Your secure monitoring workspace<span>.</span></h1><p>Follow each observation from the sensor to its trusted digital counterpart.</p></div><a class="factory-link" href="/twin">Explore factory view <span aria-hidden="true">↗</span></a></section>
+      <div class="connection-strip"><p id="connection" role="status" aria-live="polite">Connecting to the local runner…</p><span>Sensor → protected gateway → Digital Twin</span></div>
+      <section class="summary-grid" aria-label="Live experiment overview">
+        <article class="metric"><div class="metric-label">KEY AVAILABILITY <span aria-hidden="true">◇</span></div><div class="metric-value" id="metric-keys">—</div><p id="metric-key-note">Waiting for pool status</p></article>
+        <article class="metric"><div class="metric-label">PROTECTED CONNECTION <span aria-hidden="true">⌁</span></div><div class="metric-value word" id="metric-connection">—</div><p id="metric-epoch">Waiting for gateway status</p></article>
+        <article class="metric"><div class="metric-label">ACCEPTED READINGS <span aria-hidden="true">↗</span></div><div class="metric-value" id="metric-delivered">—</div><p id="metric-delivery-note">Waiting for delivery status</p></article>
+        <article class="metric metric-freshness"><div class="metric-label">TWIN FRESHNESS <span aria-hidden="true">◷</span></div><div class="metric-value word" id="metric-freshness">—</div><p id="metric-age">Waiting for observation status</p></article>
+      </section>
+      <div class="section-heading"><div><span class="eyebrow">THE COMPLETE PICTURE</span><h2 id="pipeline-title">Observation pipeline</h2></div><span class="subtle-chip">One epoch. Multiple readings.</span></div>
+      <div class="telemetry-grid">
+        <section class="surface sensor-surface" aria-labelledby="sensor-title"><div class="surface-heading"><div><span class="panel-number">01</span><h3 id="sensor-title">Sensor observatory</h3></div><span class="owner-label">SOURCE</span></div><div id="sensor-panel"><co2-sensor-panel></co2-sensor-panel></div></section>
+        <section class="surface key-surface" aria-label="Key supply"><div class="surface-heading"><div><span class="panel-number">02</span><h3>Key supply</h3></div><span class="owner-label">EMULATED</span></div><div id="key-panel"><p class="empty">Waiting for key supply…</p></div></section>
+        <section class="surface twin-surface" aria-label="Digital Twin"><div class="surface-heading"><div><span class="panel-number">04</span><h3>Digital counterpart</h3></div><a href="/twin" class="text-link">Open factory ↗</a></div><div id="twin-panel"><p class="empty">Waiting for Twin status…</p></div></section>
+        <section class="surface gateway-surface" aria-label="Gateway"><div class="surface-heading"><div><span class="panel-number">03</span><h3>Security gateway</h3></div><span class="owner-label">AES-GCM</span></div><div id="gateway-panel"><p class="empty">Waiting for gateway status…</p></div><div class="gateway-note"><span aria-hidden="true">◇</span><p>Only authenticated observations can update the Twin. An epoch uses one matching key pair.</p></div></section>
       </div>
-    </section>
-    <section aria-labelledby="controls-title"><h2 id="controls-title">Scenario controls <span class="tag">NANCY</span></h2>
-      <p>Generate keys, start an epoch and send readings. Interrupt supply to test the active epoch, then end it and request a new one with an empty pool.</p>
-      <p><a href="/twin">Open full-screen factory view</a></p>
-      <p id="scenario-status">Scenario: not started · Delivery counts unavailable</p>
-      <p id="clock-status" role="status">Experiment clock: loading…</p>
-      <p id="action-error" role="alert" hidden></p>
-      <fieldset id="controls" disabled><legend>Local experiment actions</legend>
-        <button type="button" data-action="reset">Reset</button>
-        <label>Keys to generate <input id="key-count" type="number" min="1" max="100" step="1" value="1" disabled></label>
-        <button type="button" data-action="generate_keys" disabled>Generate keys</button>
-        <button type="button" data-action="interrupt_supply" disabled>Interrupt supply</button>
-        <button type="button" data-action="resume_supply" disabled>Resume supply</button>
-        <button type="button" data-action="start_epoch" disabled>Start epoch</button>
-        <button type="button" data-action="end_epoch" disabled>End epoch</button>
-        <button type="button" data-action="send_reading" disabled>Send reading</button>
-        <label>Advance by seconds <input id="time-step" type="number" min="1" max="3600" step="1" value="5"></label>
-        <button type="button" data-action="advance_time">Advance time</button>
-      </fieldset>
-      <p id="action-help">Loading action availability…</p>
-    </section>
-    <section aria-labelledby="events-title"><h2 id="events-title">Events &amp; results</h2><p id="event-empty">No runner events. No end-to-end experiment has run.</p><ol id="events" aria-label="Runner event history"></ol></section>
-  </main>
-  <footer>Local demonstration · No physical quantum communication · Integrated demonstration · Manual experiment clock</footer>
+      <div class="experiment-grid">
+        <section class="surface controls-surface" aria-labelledby="controls-title"><div class="surface-heading"><div><span class="panel-number">↳</span><h2 id="controls-title">Experiment controls</h2></div><span class="subtle-chip">Presenter controlled</span></div><p class="section-description">Establish a connection, deliver observations, then explore interruption and recovery.</p>
+          <p id="scenario-status" class="scenario-strip">Waiting for experiment status…</p>
+          <p id="clock-status" class="clock-strip" role="status">Experiment clock: loading…</p>
+          <p id="action-error" role="alert" hidden></p>
+          <p id="monitoring-status" class="scenario-strip" role="status">Loading operating mode…</p>
+          <fieldset id="controls" disabled><legend class="sr-only">Local experiment actions</legend>
+            <div class="control-group"><div class="group-caption"><span>01</span> Prepare the key supply</div><div class="control-row"><label>Key pairs<input id="key-count" type="number" min="1" max="100" step="1" value="1" disabled></label><button type="button" data-action="generate_keys" class="button-primary" disabled>Generate keys</button></div><div class="control-row"><button type="button" data-action="interrupt_supply" disabled>Interrupt supply</button><button type="button" data-action="resume_supply" disabled>Resume supply</button></div></div>
+            <div class="control-group"><div class="group-caption"><span>02</span> Connect &amp; deliver</div><div class="control-row"><button type="button" data-action="start_monitoring" data-automatic-only class="button-primary">Start monitoring</button><button type="button" data-action="stop_monitoring" data-automatic-only>Stop monitoring</button><button type="button" data-action="start_epoch" disabled>Start epoch</button><button type="button" data-action="end_epoch" disabled>End epoch</button></div><button type="button" data-action="send_reading" class="button-primary button-wide" disabled>Send reading <span aria-hidden="true">→</span></button></div>
+            <div class="control-group"><div class="group-caption"><span>03</span> Explore freshness</div><div class="control-row"><label>Seconds<input id="time-step" type="number" min="1" max="3600" step="1" value="5"></label><button type="button" data-action="advance_time">Advance time</button></div><button type="button" data-action="reset" class="button-reset">↻ Reset experiment</button></div>
+          </fieldset><p id="action-help" class="help-text">Loading action availability…</p>
+        </section>
+        <section class="surface events-surface" aria-labelledby="events-title"><div class="surface-heading"><div><span class="panel-number">≡</span><h2 id="events-title">Activity stream</h2></div><span class="owner-label">LATEST FIRST</span></div><p class="section-description">A trace of your experiment, one action at a time.</p><div id="event-empty" class="event-empty"><span aria-hidden="true">⌁</span><strong>Your experiment starts here</strong><p>Generate a key pair to begin. Actions and outcomes will appear in this stream.</p></div><ol id="events" aria-label="Runner event history"></ol></section>
+      </div>
+      <footer class="workspace-footer"><span>Q-TwinSecure <span class="footer-divider">/</span> Industrial monitoring research</span><span>Classical key randomness · Software model · Direct AES-GCM</span></footer>
+    </main>
+  </div>
 </body>
 </html>

@@ -158,3 +158,34 @@ Component integration and scenario controls remain pending. See [Nancy's checkli
 - [x] Adapt shared-app and rejection tests to Nancy's runner; 76 Python tests and 7 JavaScript entries passed.
 - [x] Serve factory view and external Twin CSS; expose rejection counters and configurable thresholds.
 - [ ] Review / and /twin in a browser, including layout, controls and disconnected states.
+
+## Dashboard presentation refresh
+
+- [x] Redesign shared navigation, overview, pipeline, controls and activity styling.
+- [x] Connect overview cards to real safe API values; clear live claims on disconnect.
+- [x] Verify focused HTTP and JavaScript tests; inspect desktop and narrow initial layout screenshots.
+- [ ] Presenter review of the complete redesigned page, control area and /twin view on desktop/mobile.
+
+- [x] Replace factory top bar and separate controls/activity navigation into focused views.
+- [ ] Presenter checks on mobile and browser Back/Forward navigation after the redesign.
+
+## Automatic operation
+
+- [x] Real-time monotonic observation age and UTC timestamps in automatic mode.
+- [x] Background scheduled readings, automatic epochs/renewal/retry and supply recovery.
+- [x] Start/stop, reset and mode-aware UI controls; lock shared state and stop/join workers.
+- [x] Preserve deterministic manual mode; verify 85 Python tests and 7 Node entries.
+- [x] Save live automatic-control and real-time DELAYED Twin screenshots.
+- [ ] Final interactive/mobile presentation rehearsal in automatic mode.
+
+## Committee scenario walkthrough
+
+- [x] Add --presentation and automatically exercise all agreed PoC scenario checkpoints with real components.
+- [x] Show phase explanations/progress, verified outcomes and replay on dashboard/factory view.
+- [x] Preserve continuous and manual modes; guard scenario ownership and clean replay.
+- [x] Verify 89 Python tests and 8 Node entries, plus default-speed desktop capture.
+- [ ] Rehearse the guided sequence with the team on presentation hardware/mobile.
+
+- [x] Re-run all 89 Python tests and 8 Node entries after mode additions.
+- [x] Exercise manual-mode controls, validation, interruption/recovery, factory reset and 390px layout in a real browser.
+- [x] Verify actual server-stop disconnection and restart reconnection; save manual-mode run guide/evidence.

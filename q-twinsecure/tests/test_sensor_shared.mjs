@@ -31,7 +31,7 @@ const gatewayModule = await import(`data:text/javascript;base64,${Buffer.from(ga
 globalThis.testGatewayRenderer = gatewayModule.renderGatewayPanel;
 source = 'const renderGatewayPanel = globalThis.testGatewayRenderer; const renderKeyPanel = () => {};\n' +
   source.replace(/^import .*;\r?$/gm, '')
-    .replace(/refresh\(\);\s*setInterval\(refresh, 2000\);/, 'export { render, disconnected };');
+    .replace(/refresh\(\);\s*setInterval\(refresh, 1000\);/, 'export { render, disconnected };');
 const { render, disconnected } = await import(`data:text/javascript;base64,${Buffer.from(source).toString('base64')}`);
 render(snapshots[0]);
 assert.equal(panel.field('connection').textContent, 'Awaiting reading');

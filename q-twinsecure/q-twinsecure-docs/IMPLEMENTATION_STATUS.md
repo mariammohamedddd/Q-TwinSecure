@@ -26,7 +26,7 @@ This file distinguishes **reported setup**, **drafted code**, **verified impleme
 | TLS 1.3 external PSK | Not started | Optional for this small PoC; do not claim it is implemented. |
 | Digital Twin freshness logic | In progress | Real component wired into shared runner; automated integration passed. Shared browser/presentation review pending. |
 | Main end-to-end flow | Implemented and tested | Real HTTP normal/interruption/expiry/recovery/reset flow passed on Nancy; browser review pending. |
-| Automated tests | Implemented and tested | Combined suite: 76 Python tests; 7 JavaScript test entries passed. |
+| Automated tests | Implemented and tested | Combined suite: 89 Python tests; 8 JavaScript test entries passed. |
 | Normal/interruption/recovery experiment | In progress | Automated API scenario passed; presenter rehearsal and screenshots pending. |
 | ML anomaly detection | Out of current PoC scope | Broader research direction only. |
 | LLM explanations | Out of current PoC scope | Broader research direction only. |
@@ -53,7 +53,7 @@ Use these status labels:
 
 Nancy's shared runner now connects the actual key pool, sensor, gateway and Twin. All four owner panels are loaded by the shared dashboard and receive real API snapshots. Keys remain private; only authenticated readings accepted by the Twin increment delivery counts. Reset recreates all components. The runner uses supported manual key generation and one shared manual experiment clock. See [current run/review guide](../experiments/scenario_checklist.md).
 
-Merged Kareem's latest main contribution (PR #5, a309f46 via d41926f) while preserving Nancy's integration. Latest combined automated verification passed: 76 Python tests and 7 JavaScript test entries. No assembled-dashboard browser automation or screenshots were captured. Visual review, team Phase 3 acceptance, presentation rehearsal and final evidence remain pending. Older entries below are historical checkpoints.
+Merged Kareem's latest main contribution (PR #5, a309f46 via d41926f) while preserving Nancy's integration. Latest combined automated verification passed: 89 Python tests and 8 JavaScript test entries. No assembled-dashboard browser automation or screenshots were captured. Visual review, team Phase 3 acceptance, presentation rehearsal and final evidence remain pending. Older entries below are historical checkpoints.
 
 ## 4. Update log
 
@@ -106,3 +106,33 @@ Merged main 508ae20, including Mariam Mohamed's shared sensor test (7df48be) and
 Added real rejection counts, configurable thresholds retained across reset, optional automatic supply, server cleanup and /twin factory view with external Twin CSS. Shared-app tests now verify actual runner snapshots reaching the sensor and Twin panels, disconnection/recovery/reset and tampering. Fixed Python-launcher portability and bounded rejected-request draining in the standalone key preview after Windows reset failures.
 
 Actual verification: 76 Python tests passed; the five Node test files passed 7 test entries; app.js syntax passed. Saved owner evidence is historical component evidence; this entry records the current combined run. No assembled browser visual review or screenshots were performed.
+
+## Dashboard redesign — 2026-11-07
+
+Nancy's shared dashboard now uses a navy navigation rail, light workspace, teal accents, real API-driven overview cards, grouped experiment controls and an activity stream. Existing component modules and action routes are preserved. Overview values become unavailable on disconnection. The key panel accepts an optional generation mode so its empty-pool guidance matches manual/automatic operation; standalone preview defaults remain automatic.
+
+Verification: 7 JavaScript test entries passed, including real snapshot forwarding and overview/disconnected assertions; all 9 focused shared HTTP tests passed. app.js and key-panel.js syntax checks passed. Headless Chrome screenshots were inspected at desktop (1560px) and narrow (600px) widths for the top-level layout and real initial-state rendering. A separate controls-anchor capture returned blank and did not establish lower-page visual acceptance; interactive presenter review and full-page/mobile acceptance remain pending. Temporary preview server stopped after review. These checks do not replace the earlier full Python suite result.
+
+## Factory header and navigation correction — 2026-11-07
+
+Replaced the factory header with a structured brand/navigation/status bar. Experiment controls (#experiment) and Activity log (#activity) now select distinct focused workspace views rather than scrolling to adjacent headings; active navigation and breadcrumb follow the selected view. Old heading hashes are recognized for compatibility. One shared runner/poller remains in use.
+
+Verification: shared sensor/Twin app tests passed (2 Node test entries), all 9 focused HTTP tests passed, app.js syntax passed. Desktop headless Chrome screenshots inspected factory header, controls and activity as visibly distinct views; then switched to dedicated view hashes to avoid native heading-anchor scroll overriding view positioning. Responsive CSS is included; interactive and mobile presenter review remains pending.
+
+## Complete automatic monitoring — current on Nancy (2026-11-07)
+
+The user requested complete automatic operation. `--automatic` and the legacy `--automatic-key-supply` flag now both enable automatic key replenishment, a background sensor/delivery scheduler, epoch establishment/renewal/retry and monotonic real-time freshness. CLI defaults: reading interval 2s, epoch duration 10s, key interval 1s, automatic capacity 3, freshness thresholds 5/15s. Manual mode remains deterministic for the existing tests. See [automatic run guide](../experiments/automatic_mode.md).
+
+Actions/status add monitoring mode, running flag, epoch remaining time, intervals and a safe scheduler error. Start/stop monitoring are available in automatic mode; lifecycle/sending/time controls are hidden and rejected at the API boundary. Reset preserves configuration and uses one scheduler, closes the previous key worker and restarts automatic operation. Access from HTTP and scheduler is serialized with a lock; unexpected worker errors stop sending visibly. No key material is serialized.
+
+Actual verification: full Python suite passed 85 tests (9 new automatic tests); all five Node files passed 7 test entries; app.js syntax and CLI help checks passed. A fresh-port live preview confirmed elapsed time advancing from 23.15s to 24.40s with 12 accepted readings, CURRENT and 3 consumed epoch allocations. After Stop monitoring, real observation age reached 7.9s/DELAYED; factory screenshot showed 8.5s/DELAYED. Screenshots saved under evidence/automatic-*.png. The older preview port returned stale state, so visual checks used a fresh port; users must restart old servers. Interactive/mobile presenter review remains pending.
+
+## Guided committee presentation — current on Nancy (2026-11-07)
+
+At the user's request, added --presentation: a real-component scenario walkthrough, distinct from continuous --automatic monitoring. It shows capacity, normal delivery, tampering rejection, active-epoch survival during supply interruption, failed empty-pool renewal, real-time DELAYED/MISSING and recovery, then holds completed results while recovered readings continue. The dashboard/factory banner shows stage, explanation, progress, real verified checks and replay. Individual controls cannot disrupt the sequence. Replay uses a clean one-pair pool and one existing scheduler; no secrets/envelopes are serialized. See ../experiments/presentation_mode.md.
+
+Verification: 89 Python tests and 8 Node entries passed. Four new Python tests observe all nine stages and actual component outcomes, replay/state isolation, action ownership and real HTTP background progression; the new Node test renders completed real-run snapshots. Default-speed headless Chrome capture showed step 5 with disconnected gateway, empty interrupted pool, rejected=1 and preserved CURRENT observation aging toward DELAYED. Screenshot saved as evidence/guided-presentation.png. Mobile and final presenter rehearsal remain pending.
+
+## Manual-mode verification — 2026-11-07
+
+Re-ran the complete suite: 89 Python tests and 8 Node entries passed, plus app.js syntax. Added an optional dependency-free real-Chrome CDP walkthrough in tests/browser_manual_review.mjs. Actual browser checks passed for mode/visibility, distinct navigation, reset, empty-pool/invalid-input errors, two readings per epoch, interruption with continued delivery, blocked empty renewal, DELAYED/MISSING transitions, fresh-key recovery, shared factory state/reset and a 390px layout with a working generation control. No unexpected browser JavaScript exceptions were reported. The page detected actual server shutdown, disabled controls and reconnected with clean state after restart. Screenshot reviewed/saved: evidence/manual-browser-mobile.png. See ../experiments/manual_mode.md for exact instructions and scope. No runtime defect was found in this verification; arbitrary environments/production correctness are not claimed.
